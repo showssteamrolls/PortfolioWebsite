@@ -12,16 +12,23 @@
         display: block;
         padding: 8px 0;
 
+        /* MAIN LOGO */
         img {
             display: block;
-            margin: 8px auto;
-            margin-left: 4px;
+            margin: 0 auto;                 /* center horizontally */
             width: 40px;
             height: auto;
+            transform: translateX(1px);     /* nudge right */
+        }
 
-            &.sub-logo {
-                width: 50px;
-            }
+        /* SUB-LOGO ("ANT") */
+        img.sub-logo {
+            width: 50px;
+            margin-top: -7px;               /* move upward */
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            transform: translateX(0px);     /* small right alignment tweak */
         }
     }
 
