@@ -27,6 +27,8 @@ const Home = () => {
                     <h1>
                         <span className={`${letterClass} _8`}>H</span>
                         <span className={`${letterClass} _9`}>i</span>
+                        <span className={`${letterClass} _9`}> </span>
+                        <span className={`${letterClass} _9`}>👋</span>
                         <br />
 
                         <span className={`${letterClass} _10`}>I</span>
@@ -48,7 +50,10 @@ const Home = () => {
                         />
                     </h1>
 
-                    <h2>Data Science & Business Administration (Finance Concentration)</h2>
+                    <h2>Data Science & Business Administration</h2>
+                    
+                    <h2>(Concentrations: Finance & Fintech)</h2>
+
                     <h2>2027 at Northeastern University</h2>
 
                     <Link to="/contact" className="flat-button">
