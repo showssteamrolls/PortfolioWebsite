@@ -52,7 +52,7 @@
   margin-bottom: 0;
   padding-bottom: 0;
   &::-webkit-scrollbar {
-    background-color: linear-gradient(to bottom, #023e8a 20%, #00b4d8 80%);
+    background-color: linear-gradient(to bottom, #357DED 20%, #00b4d8 80%);
     width: 8px;
   }
 
@@ -67,7 +67,7 @@
     h1 {
       font-size: 53px;
       font-family: 'Coolvetica';
-      color: #ffd700;
+      color: #357DED;
       font-weight: 400;
       margin-top: 0;
       position: relative;
@@ -76,7 +76,7 @@
 
       &:before {
         font-family: 'La Belle Aurore', cursive;
-        color: #ffd700;
+        color: #357DED;
         font-size: 18px;
         position: absolute;
         margin-top: -10px;
@@ -87,7 +87,7 @@
 
       &:after {
         font-family: 'La Belle Aurore', cursive;
-        color: #ffd700;
+        color: #357DED;
         font-size: 18px;
         line-height: 18px;
         position: absolute;
@@ -100,7 +100,7 @@
 
     p {
       font-size: 16px;
-      color: #fff;
+      color: #476ea0;
       font-family: sans-serif;
       font-weight: 500;
       max-width: fit-content;
@@ -118,7 +118,7 @@
 
     h2 {
       font-size: 20px;
-      color: #ffd700;
+      color: #357DED;
       font-family: sans-serif;
       font-weight: 600;
       max-width: fit-content;
@@ -156,7 +156,7 @@
 
   .text-animate-hover {
     &:hover {
-      color: #fff;
+      color: #023e8a;
     }
   }
 }

@@ -92,20 +92,20 @@
 }
 
 .flat-button { 
-    color: #275DFA; 
+    color: #357DED; 
     font-size: 15px; 
     font-weight: 800;
     letter-spacing: 4px;
     text-decoration: none;
     padding: 10px 70px; 
-    border: 2px solid #275DFA; 
+    border: 2px solid #357DED; 
     margin-top: 25px; 
     float: left; 
     animation: fadeIn 1s 1.8s backwards; 
     white-space: nowrap; 
 
     &:hover { 
-        background: #275DFA; 
+        background: #357DED; 
         color: #333;
     }
 }

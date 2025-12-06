@@ -17,7 +17,7 @@
   .date {
     font-size: 14px;
     font-weight: bold;
-    color: #ffd700;
+    color: #357DED;
     cursor: pointer;
   }
   
@@ -36,8 +36,8 @@
   
   .timeline-item {
     position: relative;
-    background-color: #333; 
-    color: #fff;
+    background-color: #cdeeff; 
+    color: #357DED;
     border-radius: 10px; 
     padding: 20px;
     margin-bottom: 20px;
@@ -67,7 +67,7 @@
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      background-color: green; 
+      background-color: #357DED; 
     }
   }
   
@@ -82,7 +82,7 @@
   }
   
   .timeline-item.expanded {
-    background-color: #444; 
+    background-color: rgb(255, 252, 188); 
   }
   
   .timeline-item p {
