@@ -51,8 +51,8 @@ const Home = () => {
                     </h1>
 
                     <h2>Data Science & Business Administration</h2>
-                    
-                    <h2>(Concentrations: Finance & Fintech)</h2>
+
+                    <h2>Concentrations/Minors: Finance & Interdisciplinary AI</h2>
 
                     <h2>2027 at Northeastern University</h2>
 
