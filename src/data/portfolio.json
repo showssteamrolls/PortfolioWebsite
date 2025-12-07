@@ -1,9 +1,9 @@
 {
     "portfolio": [
         {
-            "cover": "/portfolio/McGill.png", 
-            "title": "Exam Scheduler", 
-            "description": "ReactJS, PostgreSQL, Spring Boot", 
+            "cover": "/portfolio/showsstores.png", 
+            "title": "Walmart Stores Performance Dashboard", 
+            "description": "Tableau, KPIs, Calculated Fields", 
             "url": ""
         },
         {
