@@ -4,50 +4,25 @@
             "cover": "/portfolio/McGill.png", 
             "title": "Exam Scheduler", 
             "description": "ReactJS, PostgreSQL, Spring Boot", 
-            "url": "https://mcgillscheduler.vercel.app/"
+            "url": ""
         },
         {
-            "cover": "/portfolio/Empor.png", 
-            "title": "Empor", 
-            "description": "NextJS, Prisma, Spring Boot", 
-            "url": "https://www.empor.ca"
+            "cover": "/portfolio/showssentiments.png", 
+            "title": "Restaurant Reviews Sentiment Analysis", 
+            "description": "VADER, Selenium, NumPy", 
+            "url": ""
         },
         {
-            "cover": "/portfolio/PLPredictor.png", 
-            "title": "PL Match Predictor", 
-            "description": "Python, Sci-kit Learn, Pandas", 
-            "url": "https://github.com/Erik-Cupsa/Soccer-Match-Predictor"
+            "cover": "/portfolio/showsspeed.png", 
+            "title": "F1 Operational Analytics", 
+            "description": "Pandas, Scikit-Learn, Seaborn, Matplotlib", 
+            "url": ""
         },
         {
-            "cover": "/portfolio/FPL.png", 
-            "title": "PremierZone", 
-            "description": "ReactJS, PostgreSQL, Spring Boot", 
-            "url": "https://premierzone.vercel.app/"
-        },
-        {
-            "cover": "/portfolio/JwtImage.png", 
-            "title": "Spring Security Tutorial", 
-            "description": "Spring Boot, JWT", 
-            "url": "https://youtu.be/uZGuwX3St_c?si=jIITQc20dXuGoOAP"
-        },
-        {
-            "cover": "/portfolio/GymTech.png", 
-            "title": "GymTech", 
-            "description": "ReactJS, PostgreSQL, Spring Boot", 
-            "url": "https://github.com/Erik-Cupsa/GymTech"
-        },
-
-        {
-            "cover": "/portfolio/Chat.png", 
-            "title": "StudySmartBot", 
-            "description": "ReactJS, NodeJS, Web Sockets", 
-            "url": "https://github.com/Erik-Cupsa/StudySmartBot"
-        }, 
-        {
-            "cover": "/portfolio/Jetpack.png", 
-            "title": "Super GTA Adventure", 
-            "description": "HTML, CSS, JavaScript", 
-            "url": "https://super-gta-adventure.vercel.app/"
+            "cover": "/portfolio/showssharpe.png", 
+            "title": "Mega-Cap Portfolio Analysis", 
+            "description": "Excel, Solver, Financial Modeling", 
+            "url": ""
         }
     ]
 }

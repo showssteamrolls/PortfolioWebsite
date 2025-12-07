@@ -7,9 +7,6 @@ const Timeline = () => {
       date: 'Jan 2026 – Jun 2026',
       title: 'Commercial & Marketing Analyst @ Wayfair',
       description: [
-        'Engineered Large Language Models (LLMs), including <b>BERT</b> and <b>Attention Models</b>, to analyze <b>software engineering requirements</b> and generate accurate dependency lists, improving project planning efficiency by <b>37%</b>',
-        'Analyzed 1200+ <b>software requirements</b> monthly using <b>scikit-learn</b> (classification models), <b>spaCy</b>, and <b>NLTK</b> in <b>Python</b>, saving the company $20,000 annually by decreasing project lead times',
-        'Integrated <b>TF-IDF</b> vectorization to detect similarities in <b>software requirements</b>, focusing on preprocessing, model training, hyperparameter tuning and clustering to optimize <b>NLP</b> analysis processes',
       ],
       expanded: false,
     },
@@ -17,9 +14,9 @@ const Timeline = () => {
       date: 'Nov 2024 – Feb 2025',
       title: 'Data Consultant @ Techsalerator',
       description: [
-        'Designed <b>30+ AWS Lambda Functions in AWS</b>, strategically leveraging <b>Lambda layers</b> to increase processing speed by <b>35% </b>and re-usability by <b>52%</b>, resulting in cost savings of <b>$1,000</b> per large scale deployment',
-        'Implemented <b>15+</b> serverless workflows using <b>AWS Step Functions</b>, seamlessly integrating <b>REST APIs </b>and rigorously tested with <b>Postman</b>, resulting in a <b>65%</b> reduction in execution time and enhanced operational efficiency',
-        'Crafted a <b>Spring Boot</b> application with a <b>Drools</b> logic engine, containerized it using <b>Docker</b>, and seamlessly deployed it on <b>AWS</b> using <b>EC2</b>, strategically allocating cloud resources to ensure enhanced scalability and reliability',
+        'Prospect 300+ leads weekly to connect businesses and consumers to relevant datasets',
+        'Evaluate outreach metrics to redirect efforts toward highest-yield channels, similar to digital campaign analysis',
+        'Carry an inviting curiosity to engage leads & stakeholders in sharing their needs and concerns',
       ],
       expanded: false,
     },
@@ -27,11 +24,23 @@ const Timeline = () => {
       date: 'Jan 2024 – Present',
       title: 'TA: Ecological Economics @ Northeastern University',
       description: [
-        'Programmed and deployed a <b>Python-based data migration pipeline</b> on <b>Azure</b>, achieving a <b>50%</b> reduction in transfer time for <b>100+ terabytes</b> of critical business data',
-        'Centralized a <b>SQL database infrastructure</b> on <b>Azure</b>, enhancing data accessibility and security for <b>50+</b> stakeholders, resulting in a <b>30%</b> improvement in query performance across the organization',
       ],
       expanded: false,
     },
+    {
+      date: 'May 2025 – July 2025',
+      title: 'Summer Debate Instructor @ Yiyang International Education',
+      description: [
+      ],
+      expanded: false,
+    },
+    {
+      date: 'Nov 2022 – July 2023',
+      title: 'Assistant Debate Instructor @ New England Academy',
+      description: [
+      ],
+      expanded: false,
+    }
   ]);
 
   const handleItemClick = (index) => {
