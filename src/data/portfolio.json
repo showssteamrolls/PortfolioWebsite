@@ -1,12 +1,6 @@
 {
     "portfolio": [
         {
-            "cover": "/portfolio/showsstores.png", 
-            "title": "Walmart Stores Performance Dashboard", 
-            "description": "Tableau, KPIs, Calculated Fields", 
-            "url": ""
-        },
-        {
             "cover": "/portfolio/showssentiments.png", 
             "title": "Restaurant Reviews Sentiment Analysis", 
             "description": "VADER, Selenium, NumPy", 

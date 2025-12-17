@@ -5,14 +5,14 @@ const Timeline = () => {
   const [events, setEvents] = useState([
     {
       date: 'Jan 2026 – Jun 2026',
-      title: 'Commercial & Marketing Analyst @ Wayfair',
+      title: 'Commercial & Marketing Analyst Co-op @ Wayfair',
       description: [
       ],
       expanded: false,
     },
     {
       date: 'Nov 2024 – Feb 2025',
-      title: 'Data Consultant @ Techsalerator',
+      title: 'Data Consultant Intern @ Techsalerator',
       description: [
         'Prospect 300+ leads weekly to connect businesses and consumers to relevant datasets',
         'Evaluate outreach metrics to redirect efforts toward highest-yield channels, similar to digital campaign analysis',
@@ -22,7 +22,7 @@ const Timeline = () => {
     },
     {
       date: 'Jan 2024 – Present',
-      title: 'TA: Ecological Economics @ Northeastern University',
+      title: 'TA (Ecological Economics) @ Northeastern University',
       description: [
       ],
       expanded: false,
