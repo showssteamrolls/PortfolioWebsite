@@ -4,14 +4,14 @@ import './index.scss';
 const Timeline = () => {
   const [events, setEvents] = useState([
     {
-      date: 'Jan 2026 – Jun 2026',
+      date: 'Jun 2025 – Aug 2026',
       title: 'AI & Machine Learning Instructor @ Yiyang International Education',
       description: ['Wish I discovered ML sooner. Thus, I taught it to 4th-6th graders, focusing on easy intuitions & real-world applications."
       ],
       expanded: false,
     },
     {
-      date: 'Jan 2026 – Jun 2026',
+      date: 'Jun 2026 – Dec 2026',
       title: 'Data Analyst Co-op @ Wayfair',
       description: ['Using data to navigate a complex problem space–– ads.',
                     'My favorite projects throughout my term (all-focused on direct business impact):',
@@ -30,14 +30,7 @@ const Timeline = () => {
     },
     {
       date: 'Jan 2024 – Present',
-      title: 'TA (Ecological Economics) @ Northeastern University',
-      description: [
-      ],
-      expanded: false,
-    },
-    {
-      date: 'May 2025 – July 2025',
-      title: 'Summer Debate Instructor @ Yiyang International Education',
+      title: 'Graduate Teaching Assistant @ Northeastern University',
       description: [
       ],
       expanded: false,
