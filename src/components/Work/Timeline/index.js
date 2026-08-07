@@ -6,7 +6,7 @@ const Timeline = () => {
     {
       date: 'Jun 2025 – Aug 2026',
       title: 'AI & Machine Learning Instructor @ Yiyang International Education',
-      description: ['Wish I discovered ML sooner. Thus, I taught it to 4th-6th graders, focusing on easy intuitions & real-world applications."
+      description: ['Wish I discovered ML sooner. Thus, I taught it to 4th-6th graders, focusing on easy intuitions & real-world applications.'
       ],
       expanded: false,
     },
