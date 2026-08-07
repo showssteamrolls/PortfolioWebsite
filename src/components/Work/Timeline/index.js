@@ -12,8 +12,12 @@ const Timeline = () => {
     },
     {
       date: 'Jan 2026 – Jun 2026',
-      title: 'Commercial & Marketing Analyst Co-op @ Wayfair',
-      description: [
+      title: 'Data Analyst Co-op @ Wayfair',
+      description: ['Using data to navigate a complex problem space–– ads.',
+                    'My favorite projects throughout my term (all-focused on direct business impact):',
+                    '  1) ML Conversion Rate Predictor',
+                    '  2) Individual Ad Performance Dashboard',
+                    '  3) Audience Targeting A/B Test'
       ],
       expanded: false,
     },
@@ -21,7 +25,6 @@ const Timeline = () => {
       date: 'Nov 2024 – Feb 2025',
       title: 'Data Consultant Intern @ Techsalerator',
       description: [
-        'The world needs data.'
       ],
       expanded: false,
     },
