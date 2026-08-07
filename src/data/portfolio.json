@@ -5,18 +5,5 @@
             "title": "Restaurant Reviews Sentiment Analysis", 
             "description": "VADER, Selenium, NumPy", 
             "url": ""
-        },
-        {
-            "cover": "/portfolio/showsspeed.png", 
-            "title": "Formula 1 Operational Analytics", 
-            "description": "Pandas, Scikit-Learn, Seaborn, Matplotlib", 
-            "url": ""
-        },
-        {
-            "cover": "/portfolio/showssharpe.png", 
-            "title": "Mega-Cap Portfolio Analysis", 
-            "description": "Excel, Solver, Financial Modeling", 
-            "url": ""
-        }
-    ]
-}
+        }]
+    }
