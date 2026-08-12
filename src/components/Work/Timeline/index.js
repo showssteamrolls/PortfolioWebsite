@@ -6,7 +6,7 @@ const Timeline = () => {
     {
       date: 'Jun 2025 – Aug 2026',
       title: 'AI & Machine Learning Instructor @ Yiyang International Education',
-      description: ['Wish I discovered ML sooner. Thus, I taught it to 4th-6th graders, focusing on easy intuitions & real-world applications.'
+      description: ['Making AI & machine learning digestible for the younger generation, by: explaining concepts simply, pointing out real-world impact, and designing interactive classwork.'
       ],
       expanded: false,
     },
@@ -15,9 +15,9 @@ const Timeline = () => {
       title: 'Data Analyst Co-op @ Wayfair',
       description: ['Using data to navigate a complex problem space–– ads.',
                     'My favorite projects throughout my term (all-focused on direct business impact):',
-                    '  1) ML Conversion Rate Predictor',
-                    '  2) Individual Ad Performance Dashboard',
-                    '  3) Audience Targeting A/B Test'
+                    '  1) ML Conversion Rate Predictor -> efficientized ad spend (~65k/year)',
+                    '  2) Individual Ad Performance Dashboard -> saved time/effort by centralizing insights',
+                    '  3) Audience Targeting A/B Test -> achieved 46% lower CPM, 1.6x return on ad spend'
       ],
       expanded: false,
     },
