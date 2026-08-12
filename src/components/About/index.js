@@ -38,9 +38,7 @@ const About = () => {
                     </h1>
 
                     <p>
-                        I am an ambitious data scientist with a unique background that has prepared me 
-                        to be a team player who communicates effectively, learn new domains quickly, 
-                        and think about problems analytically. 
+                        Ambitious data scientist & team player who solves problems creatively with statistics & data, to create direct business value.  
                         <br/>
                         <LanguageList />
                         <Link to="/about/tech" className="flat-button">FRAMEWORKS/TECHNOLOGIES</Link>
