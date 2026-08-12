@@ -1,9 +1,9 @@
 {
     "portfolio": [
         {
-            "cover": "/portfolio/showssentiments.png", 
-            "title": "Restaurant Reviews Sentiment Analysis", 
-            "description": "VADER, Selenium, NumPy", 
+            "cover": "/portfolio/", 
+            "title": "Skin Burn Severity Classifier (Deep Learning)", 
+            "description": "Python, PyTorch, CNN, ResNet, Data Augmentation, Grad-CAM", 
             "url": ""
         }]
     }
