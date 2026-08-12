@@ -56,7 +56,7 @@ const Home = () => {
 
                     <h2>Minor in Interdisciplinary AI</h2>
 
-                    <h2>2027 at Northeastern University</h2>
+                    <h2>Graduating Northeastern University 2027</h2>
 
                     <Link to="/contact" className="flat-button">
                         CONTACT ME
