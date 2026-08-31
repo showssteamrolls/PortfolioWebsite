@@ -5,5 +5,11 @@
             "title": "Skin Burn Severity Classifier (Deep Learning)", 
             "description": "Python, PyTorch, CNN, ResNet, Data Augmentation, Grad-CAM", 
             "url": ""
+        },
+        {
+            "cover": "/equity-portfolio.png",
+            "title": "Client-Tailored Retirement Portfolio",
+            "description": "1-on-1 Consulting, Python, Fundamental Analysis, Risk Modeling, Next.js",
+            "url": "https://YOUR-EQUITY-APP.vercel.app"
         }]
     }
