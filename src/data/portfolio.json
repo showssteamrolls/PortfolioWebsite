@@ -1,7 +1,7 @@
 {
     "portfolio": [
         {
-            "cover": "/portfolio/", 
+            "cover": "/portfolio/skin-burn-predictor.png", 
             "title": "Skin Burn Severity Classifier (Deep Learning)", 
             "description": "Python, PyTorch, CNN, ResNet, Data Augmentation, Grad-CAM", 
             "url": ""
