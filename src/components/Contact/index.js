@@ -94,7 +94,7 @@ const Contact = () => {
                     </table>
                 </div>
             </div>
-            <Loader type="grid" />
+            <Loader type="line-scale" />
         </>
     )
 }
