@@ -6,7 +6,7 @@ const Timeline = () => {
     {
       date: 'Jun 2025 – Aug 2026',
       title: 'AI & Machine Learning Instructor @ Yiyang International Education',
-      description: ['Making AI & machine learning digestible for the younger generation, by: explaining concepts simply, pointing out real-world impact, and designing interactive classwork.'
+      description: ['Bringing AI & machine learning to the younger generation, by: breaking down core conceptual intuitions simply, connecting to real-world impact, and designing interactive classwork.'
       ],
       expanded: false,
     },
