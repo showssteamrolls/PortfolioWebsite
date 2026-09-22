@@ -1,7 +1,7 @@
 {
     "portfolio": [
         {
-            "cover": "/portfolio/boxing-app-website.png", 
+            "cover": "/portfolio/boxing-app-webpage.png", 
             "title": "Live Boxing Form Grader", 
             "description": "Python, MediaPipe, OpenCV, Visual Data Processing, Motion Tracking, Real-Time Analytics",
             "url": ""
