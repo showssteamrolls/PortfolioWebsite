@@ -66,7 +66,7 @@ const Home = () => {
                 <Logo className="Home" />
             </div>
 
-            <Loader type="grid" />
+            <Loader type="line-scale" />
         </>
     );
 };

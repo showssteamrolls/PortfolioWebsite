@@ -1,9 +1,9 @@
 {
     "portfolio": [
         {
-            "cover": "/portfolio/skin-burn-predictor.png", 
-            "title": "Skin Burn Severity Classifier", 
-            "description": "Python, PyTorch, CNNs, ResNet, Data Augmentation, Grad-CAM", 
+            "cover": "/portfolio/boxing-app-website.png", 
+            "title": "Live Boxing Form Grader", 
+            "description": "Python, MediaPipe, OpenCV, Visual Data Processing, Motion Tracking, Real-Time Analytics",
             "url": ""
         },
         {
