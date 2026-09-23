@@ -4,13 +4,13 @@
             "cover": "/portfolio/boxing-app-webpage.png", 
             "title": "Live Boxing Form Grader", 
             "description": "Python, MediaPipe, OpenCV, Visual Data Processing, Motion Tracking, Real-Time Analytics",
-            "url": ""3
+            "url": "https://boxing-form-grader.vercel.app/"
         },
         {
             "cover": "/portfolio/restaurant-reviews-dashboard.png", 
             "title": "Restaurant Reviews Analysis Dashboard", 
             "description": "Python, XGBoost, Scikit-learn, Pandas, Cross-Validation, Permutation Importance, NLP, JS, SerpAPI,",
-            "url": ""3
+            "url": "https://boston-shawarma-reviews-dashboard.vercel.app/"
         },
         {
             "cover": "/portfolio/equity-portfolio.png",
