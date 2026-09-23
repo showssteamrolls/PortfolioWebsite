@@ -3,7 +3,7 @@
         {
             "cover": "/portfolio/restaurant-reviews-dashboard.png", 
             "title": "Restaurant Reviews Analysis Dashboard", 
-            "description": "Python, XGBoost, Scikit-learn, Pandas, Cross-Validation, Permutation Importance, NLP, JS, SerpAPI,",
+            "description": "Python, XGBoost, Scikit-learn, Cross-Validation, Permutation Importance, NLP, JS, SerpAPI",
             "url": "https://boston-shawarma-reviews-dashboard.vercel.app/"
         },
         {
