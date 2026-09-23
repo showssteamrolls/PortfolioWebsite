@@ -4,7 +4,13 @@
             "cover": "/portfolio/boxing-app-webpage.png", 
             "title": "Live Boxing Form Grader", 
             "description": "Python, MediaPipe, OpenCV, Visual Data Processing, Motion Tracking, Real-Time Analytics",
-            "url": ""
+            "url": ""3
+        },
+        {
+            "cover": "/portfolio/restaurant-reviews-webpage.png", 
+            "title": "Restaurant Reviews Analysis Dashboard", 
+            "description": "Python, XGBoost, Scikit-learn, Pandas, Cross-Validation, Permutation Importance, NLP, JS, SerpAPI,",
+            "url": ""3
         },
         {
             "cover": "/portfolio/equity-portfolio.png",
