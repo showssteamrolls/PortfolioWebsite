@@ -4,10 +4,11 @@ import "./index.scss"
 
 const LanguageList = () => {
   const [languages] = useState([
-    { name: "Python", progress: 100, className: "java-progress", years: 2.5 },
-    { name: "SQL", progress: 40, className: "python-progress", years: 1 },
-    { name: "HTML/CSS", progress: 40, className: "web-progress", years: 1 },
+    { name: "Python", className: "bar-red", years: 3.5 },
+    { name: "SQL", className: "bar-blue", years: 2 },
+    { name: "HTML/CSS", className: "bar-yellow", years: 2 },
   ]);
+  const maxYears = Math.max(...languages.map((l) => l.years));
 
   return (
     <div>
@@ -16,7 +17,7 @@ const LanguageList = () => {
         {languages.map((language, index) => (
           <li key={index}>
             <span>{language.name}: {`${language.years} years`}</span>
-            <ProgressBar progress={language.progress} className={language.className} />
+            <ProgressBar progress={(language.years / maxYears) * 100} className={language.className} />
           </li>
         ))}
       </ul>

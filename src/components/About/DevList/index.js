@@ -4,10 +4,11 @@ import "./index.scss"
 
 const TechList = () => {
   const [devs] = useState([
-    { name: "Git", progress: 100, className: "aws-progress", years: 1 },
-    { name: "Looker", progress: 50, className: "postman-progress", years: 0.5 },
-    { name: "PowerBI", progress: 50, className: "github-progress", years: 0.5 }
+    { name: "Git", className: "bar-red", years: 2 },
+    { name: "Looker", className: "bar-blue", years: 1.5 },
+    { name: "PowerBI", className: "bar-yellow", years: 1.5 }
   ]);
+  const maxYears = Math.max(...devs.map((d) => d.years));
 
   return (
     <div>
@@ -16,7 +17,7 @@ const TechList = () => {
         {devs.map((dev, index) => (
           <li key={index}>
             <span>{dev.name}: {`${dev.years} years`}</span>
-            <ProgressBar progress={dev.progress} className={dev.className} />
+            <ProgressBar progress={(dev.years / maxYears) * 100} className={dev.className} />
           </li>
         ))}
       </ul>

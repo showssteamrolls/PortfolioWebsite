@@ -86,6 +86,17 @@
     background-color:  #f9d10a;
   }
 
+  /* Primary colors, slightly lightened */
+  .bar-red .progress {
+    background-color: #f26d6d;
+  }
+  .bar-blue .progress {
+    background-color: #5b9cf5;
+  }
+  .bar-yellow .progress {
+    background-color: #f7d154;
+  }
+
   .language-info {
   margin-left: 10px;
   color: #fff; 
