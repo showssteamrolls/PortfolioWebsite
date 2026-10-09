@@ -23,9 +23,9 @@
     position: absolute;
     top: 50%;
     right: 50%;
-    transform: translate(50%, -50%) rotateZ(30deg) !important; /* Centering the image and applying rotation */
+    transform: translate(50%, -50%) rotateZ(30deg) !important;
     width: 100%;
-    opacity: 1; /* Changed opacity to 1 to show the image */
+    opacity: 1; 
     z-index: 1;
   }
 }
