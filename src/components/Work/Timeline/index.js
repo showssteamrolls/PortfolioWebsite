@@ -4,6 +4,13 @@ import './index.scss';
 const Timeline = () => {
   const [events, setEvents] = useState([
     {
+      date: 'Jan 2026 – Jun 2026',
+      title: 'People Analyst Co-op @ Klaviyo',
+      description: ['Incoming'
+      ],
+      expanded: false,
+    },
+    {
       date: 'Jun 2025 – Aug 2026',
       title: 'AI & Machine Learning Instructor @ Yiyang International Education',
       description: ['Bringing AI & machine learning to the younger generation, by: breaking down core conceptual intuitions simply, connecting to real-world impact, and designing interactive classwork.'
