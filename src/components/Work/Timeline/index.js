@@ -5,8 +5,9 @@ const Timeline = () => {
   const [events, setEvents] = useState([
     {
       date: 'Jan 2026 – Jun 2026',
-      title: 'People Analyst Co-op @ Klaviyo',
-      description: ['Incoming'
+      title: 'Data Analyst Co-op @ Klaviyo',
+      description: ['Incoming Winter/Spring 2027',
+                    '(People Operations Team)'
       ],
       expanded: false,
     },
@@ -20,7 +21,8 @@ const Timeline = () => {
     {
       date: 'Jun 2026 – Dec 2026',
       title: 'Data Analyst Co-op @ Wayfair',
-      description: ['Using data to navigate a complex problem space–– ads.',
+      description: ['(Youtube Performance Marketing Analytics Team)',
+                    'Using data to navigate a complex problem space–– ads.',
                     'My favorite projects throughout my term (all-focused on direct business impact):',
                     '  1) ML Conversion Rate Predictor -> efficientized ad spend (~65k/year)',
                     '  2) Individual Ad Performance Dashboard -> saved time/effort by centralizing insights',
