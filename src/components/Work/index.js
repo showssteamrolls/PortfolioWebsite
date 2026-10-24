@@ -3,6 +3,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import Loader from 'react-loaders'
 import AnimatedLetters from '../AnimatedLetters'
 import signature from '../../assets/images/signature.png'
+import { loadCar, CAR_SIZE } from './car'
 import workData from '../../data/work.json'
 
 const jobs = workData.jobs
@@ -179,6 +180,9 @@ const Journey = ({ letterClass }) => {
     const trackPathRef = useRef(null)
     const progRef = useRef(null)
     const markerRef = useRef(null)
+    const carCanvasRef = useRef(null)
+    const carRef = useRef(null)
+    const [hasCar, setHasCar] = useState(false)
     const cardRefs = useRef([])
     const tableRef = useRef(null)
     const geoRef = useRef(null)
@@ -213,6 +217,8 @@ const Journey = ({ letterClass }) => {
             `translate(${g.aX}px, ${g.aY}px) rotate(${a}rad) translate(${-mx}px, ${-myF}px)`
         markerRef.current.setAttribute('transform', `translate(${mx.toFixed(2)} ${myF.toFixed(2)})`)
         progRef.current.style.strokeDashoffset = String(t.L - len)
+        anim.current.heading = Math.atan(slope) + a // which way the car points on screen
+        if (carRef.current) carRef.current.setHeading(anim.current.heading)
 
         // Same maths the browser uses for the tilted ground, so signs line up with it.
         const project = (wx, wy) => {
@@ -293,6 +299,31 @@ const Journey = ({ letterClass }) => {
             a.raf = requestAnimationFrame(tick)
         }
     }, [tick])
+
+    // Bring in the race car once the page is up; keep the dot if it can't load.
+    useEffect(() => {
+        let dead = false
+        let car = null
+        if (!geo || !carCanvasRef.current) return undefined
+        loadCar(carCanvasRef.current, CAR_SIZE)
+            .then((c) => {
+                if (dead) {
+                    c.dispose()
+                    return
+                }
+                car = c
+                carRef.current = c
+                c.setHeading(anim.current.heading || 0)
+                setHasCar(true)
+            })
+            .catch(() => {})
+        return () => {
+            dead = true
+            carRef.current = null
+            if (car) car.dispose()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [!!geo])
 
     // Track the size of the scroll area.
     useLayoutEffect(() => {
@@ -443,7 +474,7 @@ const Journey = ({ letterClass }) => {
                 {geo && (
                     <div className="journey-track" style={{ height: size.h + geo.D }}>
                         <div
-                            className="journey-stage"
+                            className={`journey-stage${hasCar ? ' has-car' : ''}`}
                             style={{
                                 height: size.h,
                                 perspective: `${PERSPECTIVE}px`,
@@ -511,6 +542,13 @@ const Journey = ({ letterClass }) => {
                                     </svg>
                                 </div>
                             </div>
+
+                            <canvas
+                                ref={carCanvasRef}
+                                className="journey-car"
+                                aria-hidden="true"
+                                style={{ left: geo.aX - CAR_SIZE / 2, top: geo.aY - CAR_SIZE / 2 }}
+                            />
 
                             <div className="journey-cards">
                                 <div className="journey-intro" ref={introRef}>
