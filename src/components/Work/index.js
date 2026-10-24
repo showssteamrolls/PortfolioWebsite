@@ -2,6 +2,7 @@ import './index.scss'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import Loader from 'react-loaders'
 import AnimatedLetters from '../AnimatedLetters'
+import signature from '../../assets/images/signature.png'
 import workData from '../../data/work.json'
 
 const jobs = workData.jobs
@@ -502,8 +503,9 @@ const Journey = ({ letterClass }) => {
                                 <div className="journey-intro" ref={introRef}>
                                     <Title letterClass={letterClass} />
                                     <p className="hint">
-                                        Scroll or use W A S D to follow the path <span className="chev">↓</span>
+                                        Scroll Down <span className="chev">↓</span>
                                     </p>
+                                    <img className="signature" src={signature} alt="Anthony's signature" />
                                 </div>
 
                                 {jobs.map((job, i) => {
