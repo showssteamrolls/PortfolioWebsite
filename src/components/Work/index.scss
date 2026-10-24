@@ -95,7 +95,7 @@ $bg: #F4F5F7;
 
     .journey-car {
         position: absolute;
-        z-index: 2;
+        z-index: 4;
         width: 360px;
         height: 360px;
         pointer-events: none;
@@ -252,6 +252,10 @@ $bg: #F4F5F7;
 
     .job-card {
         position: absolute;
+        /* a soft page-coloured backing so the line can pass behind the text */
+        border-radius: 14px;
+        background: rgba($bg, 0.88);
+        box-shadow: 0 0 0 14px rgba($bg, 0.88);
         margin-top: calc(-8px * (var(--k) - 1)); /* keeps the connector on the checkpoint at any size */
         color: $ink;
 

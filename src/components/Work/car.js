@@ -2,6 +2,8 @@
 // demand, so the rest of the site never pays for them. If anything fails (no
 // WebGL, missing file) the caller keeps the plain dot.
 
+import { splitWheels, ROLL_RADIUS } from './wheels'
+
 const LENGTH = 165 // px the car measures nose to tail on the ground
 const ELEVATION = (36 * Math.PI) / 180 // matches the ground's 54deg tilt
 const FOV = 20
@@ -30,6 +32,7 @@ export const loadCar = async (canvas, size) => {
     const gltf = await new GLTFLoader().loadAsync(`${process.env.PUBLIC_URL}/models/williams.glb`)
     const model = gltf.scene
     model.rotation.x = -Math.PI / 2 // the file is Z-up; its nose points to -X
+    const tires = splitWheels(THREE, model)
     const holder = new THREE.Group()
     holder.add(model)
     const box = new THREE.Box3().setFromObject(holder)
@@ -59,17 +62,22 @@ export const loadCar = async (canvas, size) => {
     scene.add(shadow)
 
     let yaw = 0
+    let travelled = 0
+    const rollPx = ROLL_RADIUS * (LENGTH / dim.x) // tire radius in screen px
     const render = () => {
         // heading: angle clockwise from "straight up the screen"
         car.rotation.y = -Math.PI / 2 - yaw
+        tires.forEach((t) => { t.rotation.y = -travelled / rollPx })
         shadow.rotation.z = -car.rotation.y
         shadow.scale.set(LENGTH * 1.5, LENGTH * 0.8, 1)
         renderer.render(scene, camera)
     }
 
     return {
-        setHeading: (h) => {
-            yaw = h
+        // heading: which way the car points; distance: how far it has rolled (px)
+        update: (heading, distance) => {
+            yaw = heading
+            travelled = distance
             render()
         },
         dispose: () => {

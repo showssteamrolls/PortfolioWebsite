@@ -5,6 +5,7 @@ import AnimatedLetters from '../AnimatedLetters'
 import signature from '../../assets/images/signature.png'
 import { loadCar, CAR_SIZE } from './car'
 import workData from '../../data/work.json'
+import track from '../../data/laguna.json'
 
 const jobs = workData.jobs
 
@@ -19,7 +20,6 @@ const TILT_DEG = 54
 const TILT = (TILT_DEG * Math.PI) / 180
 const SIN = Math.sin(TILT)
 const COS = Math.cos(TILT)
-const HEADING = 0.5 // how much the camera turns to follow the bends (0 = never)
 const KEY_SPEED = 650 // scroll px per second while W / S is held
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v))
@@ -36,77 +36,103 @@ const useMedia = (query) => {
     return matches
 }
 
-// Lay the checkpoints out along the ground, joined by one smooth curve. "j" is how far along the journey a point is (always increasing),
-// and "yF" is its y on the ground plane (the journey runs toward smaller y).
+// The circuit is Laguna Seca, traced from a map (src/data/laguna.json). The
+// journey starts on the start/finish line and stops at every other turn:
+// 1, 3, 5, 7, 9 and 11. "j" is scroll distance: every stop gets the same amount
+// of scrolling, however far apart the turns really are.
+const K = 7 // ground px per map px: how big the circuit is
+const MARGIN = 420 // room around the circuit for the signs
+const CARD_W = 380
+
+// Smooth curve through the traced points.
+const smoothPath = (pts) => {
+    const f = (v) => v.toFixed(1)
+    let d = `M ${f(pts[0].x)} ${f(pts[0].y)}`
+    for (let i = 0; i < pts.length - 1; i += 1) {
+        const p0 = pts[Math.max(0, i - 1)]
+        const p1 = pts[i]
+        const p2 = pts[i + 1]
+        const p3 = pts[Math.min(pts.length - 1, i + 2)]
+        d += ` C ${f(p1.x + (p2.x - p0.x) / 6)} ${f(p1.y + (p2.y - p0.y) / 6)},`
+            + ` ${f(p2.x - (p3.x - p1.x) / 6)} ${f(p2.y - (p3.y - p1.y) / 6)}, ${f(p2.x)} ${f(p2.y)}`
+    }
+    return d
+}
+
 const buildGeometry = (w, h, n) => {
     const contentW = w - RAIL
-    const cx = contentW / 2
     const S = Math.max(420, h * 0.68)
-    const A = Math.min(contentW * 0.16, 220)
-    // Where the line sits, in units of A, either side of the middle. It runs straight
-    // through the first stop, swings right at Wayfair, holds the bend through
-    // Techsalerator and Yiyang, then sweeps back left at Northeastern.
-    const lean = [0, 0.8, 1.2, 0.8, -1.2, -0.8]
-    const D = S * n
-    const y0F = D + 400
-    const aX = cx
+    const aX = contentW / 2
     const aY = Math.min(Math.max(h - 520, h * 0.34), h * 0.56) // leaves room under the open card
+    const cardW = Math.max(200, Math.min(CARD_W, aX - GAP - 30))
 
-    const nodes = Array.from({ length: n }, (_, i) => {
-        const x = cx + A * lean[i % lean.length]
-        // the card hangs below its stop, so it goes on the side the line is heading
-        // toward (the line arrives from the other side)
-        const prevX = i === 0 ? cx : cx + A * lean[i - 1]
-        const side = x >= prevX ? 1 : -1
-        const room = side < 0 ? x - GAP - 30 : contentW - x - GAP - 30
-        return {
-            x,
-            w: Math.max(200, Math.min(400, room)),
-            yF: y0F - S * (i + 1),
-            j: S * (i + 1),
-            side,
-        }
+    const pts = track.points.map(([x, y]) => ({ x: x * K + MARGIN, y: y * K + MARGIN }))
+    const nodes = track.stops.slice(0, n).map((si, i) => {
+        const p = pts[si]
+        const before = pts[Math.max(0, si - 4)]
+        const after = pts[Math.min(pts.length - 1, si + 4)]
+        const turn = (p.x - before.x) * (after.y - p.y) - (p.y - before.y) * (after.x - p.x)
+        // the card goes on the outside of the turn, away from where the line is heading
+        return { x: p.x, y: p.y, w: cardW, j: S * (i + 1), side: turn > 0 ? -1 : 1 }
     })
 
-    const pts = [{ x: cx, y: y0F }, ...nodes.map((nd) => ({ x: nd.x, y: nd.yF }))]
-    // smooth spline: each point's sideways slope comes from its neighbours
-    const slope = pts.map((q, i) => {
-        const p0 = pts[Math.max(0, i - 1)]
-        const p1 = pts[Math.min(pts.length - 1, i + 1)]
-        return i < 2 ? 0 : (p1.x - p0.x) / (p1.y - p0.y || 1) // straight up to the first stop
-    })
-    let d = `M ${pts[0].x} ${pts[0].y}`
-    for (let i = 1; i < pts.length; i += 1) {
-        const a = pts[i - 1]
-        const b = pts[i]
-        const dy = (b.y - a.y) / 3
-        d += ` C ${a.x + slope[i - 1] * dy} ${a.y + dy}, ${b.x - slope[i] * dy} ${b.y - dy}, ${b.x} ${b.y}`
-    }
+    const dx = pts[4].x - pts[0].x
+    const dy = pts[4].y - pts[0].y
+    const dl = Math.hypot(dx, dy) || 1
 
     return {
-        contentW, cx, S, A, D, y0F, aX, aY, nodes, d,
-        yEndF: nodes[n - 1].yF,
-        titleBack: S * 0.45, // the title stands behind the start, so it sits below the marker and the path never crosses it
-        sceneH: y0F + 300,
+        contentW, S, D: S * n, aX, aY, nodes,
+        d: smoothPath(pts),
+        worldW: track.w * K + MARGIN * 2,
+        worldH: track.h * K + MARGIN * 2,
+        start: pts[0],
+        startDir: { x: dx / dl, y: dy / dl },
+        titleBack: S * 0.45, // the title stands behind the start line, so the path never crosses it
     }
 }
 
-// Look up the point on the line at a given journey distance.
+// Monotone cubic through (x, y) knots: smooth, never doubles back. Used to turn
+// scroll distance into distance along the line, so speed eases between stops.
+const monotone = (xs, ys) => {
+    const n = xs.length
+    const delta = []
+    for (let i = 0; i < n - 1; i += 1) delta.push((ys[i + 1] - ys[i]) / (xs[i + 1] - xs[i]))
+    const m = delta.map((_, i) => 0)
+    m.push(0)
+    m[0] = delta[0]
+    m[n - 1] = delta[n - 2]
+    for (let i = 1; i < n - 1; i += 1) {
+        m[i] = delta[i - 1] * delta[i] > 0
+            ? (2 * delta[i - 1] * delta[i]) / (delta[i - 1] + delta[i])
+            : 0
+    }
+    return (x) => {
+        let i = 0
+        while (i < n - 2 && x > xs[i + 1]) i += 1
+        const h = xs[i + 1] - xs[i]
+        const u = Math.min(1, Math.max(0, (x - xs[i]) / h))
+        const u2 = u * u
+        const u3 = u2 * u
+        return (2 * u3 - 3 * u2 + 1) * ys[i] + (u3 - 2 * u2 + u) * h * m[i]
+            + (-2 * u3 + 3 * u2) * ys[i + 1] + (u3 - u2) * h * m[i + 1]
+    }
+}
+
+// Where the car is, and which way the camera and car face, at scroll distance j.
+// Angles are clockwise from straight up the page.
 const sample = (t, j) => {
+    const s = Math.min(t.maxLen, Math.max(0, t.toLen(j)))
     let lo = 0
     let hi = t.count
     while (hi - lo > 1) {
         const mid = (lo + hi) >> 1
-        if (t.js[mid] <= j) lo = mid
+        if (t.ls[mid] <= s) lo = mid
         else hi = mid
     }
-    const span = t.js[hi] - t.js[lo] || 1
-    const f = clamp01((j - t.js[lo]) / span)
-    return {
-        x: t.xs[lo] + (t.xs[hi] - t.xs[lo]) * f,
-        len: t.ls[lo] + (t.ls[hi] - t.ls[lo]) * f,
-        slope: (t.xs[hi] - t.xs[lo]) / span,
-    }
+    const span = t.ls[hi] - t.ls[lo] || 1
+    const f = clamp01((s - t.ls[lo]) / span)
+    const mix = (arr) => arr[lo] + (arr[hi] - arr[lo]) * f
+    return { x: mix(t.xs), y: mix(t.ys), len: s, cam: mix(t.cam), tru: mix(t.tru) }
 }
 
 // A rounded square for a company logo. Drop an image at
@@ -207,18 +233,26 @@ const Journey = ({ letterClass }) => {
         if (!g || !t) return
 
         const jm = p * g.D
-        const { x: mx, len, slope } = sample(t, jm)
-        const myF = g.y0F - jm
-        const a = reducedRef.current ? 0 : -Math.atan(slope) * HEADING
+        const { x: mx, y: myF, len, cam, tru } = sample(t, jm)
+        const a = reducedRef.current ? 0 : -cam // the camera turns with the car
         const cosA = Math.cos(a)
         const sinA = Math.sin(a)
 
         worldRef.current.style.transform =
             `translate(${g.aX}px, ${g.aY}px) rotate(${a}rad) translate(${-mx}px, ${-myF}px)`
         markerRef.current.setAttribute('transform', `translate(${mx.toFixed(2)} ${myF.toFixed(2)})`)
-        progRef.current.style.strokeDashoffset = String(t.L - len)
-        anim.current.heading = Math.atan(slope) + a // which way the car points on screen
-        if (carRef.current) carRef.current.setHeading(anim.current.heading)
+        t.segs.forEach((sg) => {
+            const shown = Math.min(sg.len, Math.max(0, len - sg.start))
+            const off = String(sg.len - shown)
+            const vis = shown > 0.5 ? 'visible' : 'hidden'
+            sg.els.forEach((el) => {
+                el.style.strokeDashoffset = off
+                el.style.visibility = vis
+            })
+        })
+        anim.current.heading = tru + a // which way the car points on screen
+        anim.current.dist = len
+        if (carRef.current) carRef.current.update(anim.current.heading, len)
 
         // Same maths the browser uses for the tilted ground, so signs line up with it.
         const project = (wx, wy) => {
@@ -261,14 +295,14 @@ const Journey = ({ letterClass }) => {
                 best = Math.abs(ahead)
                 active = i
             }
-            place(cardRefs.current[i], n.x, n.yF, fade(ahead))
+            place(cardRefs.current[i], n.x, n.y, fade(ahead))
         })
         if (best > g.S * 0.5) active = -1
 
         place(
             introRef.current,
-            g.cx,
-            g.y0F + g.titleBack,
+            g.start.x - g.startDir.x * g.titleBack,
+            g.start.y - g.startDir.y * g.titleBack,
             clamp01(1 - jm / (0.4 * g.S)),
             ' translate(-50%, -100%)'
         )
@@ -313,7 +347,7 @@ const Journey = ({ letterClass }) => {
                 }
                 car = c
                 carRef.current = c
-                c.setHeading(anim.current.heading || 0)
+                c.update(anim.current.heading || 0, anim.current.dist || 0)
                 setHasCar(true)
             })
             .catch(() => {})
@@ -347,19 +381,89 @@ const Journey = ({ letterClass }) => {
         if (!geo || !path) return
 
         const L = path.getTotalLength()
-        const count = 800
+        const step = 4
+        const count = Math.ceil(L / step)
         const xs = new Float64Array(count + 1)
-        const js = new Float64Array(count + 1)
+        const ys = new Float64Array(count + 1)
         const ls = new Float64Array(count + 1)
         for (let k = 0; k <= count; k += 1) {
-            const len = (L * k) / count
+            const len = Math.min(k * step, L)
             const pt = path.getPointAtLength(len)
             xs[k] = pt.x
-            js[k] = geo.y0F - pt.y
+            ys[k] = pt.y
             ls[k] = len
         }
-        tableRef.current = { L, xs, js, ls, count }
-        progRef.current.style.strokeDasharray = String(L)
+
+        // which way the line points at each sample (unwrapped so turns can pass 180deg)
+        const tru = new Float64Array(count + 1)
+        for (let k = 0; k <= count; k += 1) {
+            const lo = Math.max(0, k - 3)
+            const hi = Math.min(count, k + 3)
+            tru[k] = Math.atan2(xs[hi] - xs[lo], -(ys[hi] - ys[lo]))
+            if (k > 0) {
+                while (tru[k] - tru[k - 1] > Math.PI) tru[k] -= 2 * Math.PI
+                while (tru[k] - tru[k - 1] < -Math.PI) tru[k] += 2 * Math.PI
+            }
+        }
+        // the camera looks a little ahead and eases through bends
+        const pre = new Float64Array(count + 2)
+        for (let k = 0; k <= count; k += 1) pre[k + 1] = pre[k] + tru[k]
+        const cam = new Float64Array(count + 1)
+        for (let k = 0; k <= count; k += 1) {
+            const lo = Math.max(0, k - 15)
+            const hi = Math.min(count, k + 45)
+            cam[k] = (pre[hi + 1] - pre[lo]) / (hi - lo + 1)
+        }
+
+        // distance along the line at each stop, then the scroll-to-line mapping
+        const stopLen = geo.nodes.map((nd) => {
+            let best = 0
+            let bd = Infinity
+            for (let k = 0; k <= count; k += 1) {
+                const d2 = (xs[k] - nd.x) ** 2 + (ys[k] - nd.y) ** 2
+                if (d2 < bd) {
+                    bd = d2
+                    best = k
+                }
+            }
+            return ls[best]
+        })
+        const toLen = monotone([0, ...geo.nodes.map((nd) => nd.j)], [0, ...stopLen])
+
+        // the lit line behind the car, in short pieces so the colour can shift along it
+        const pg = progRef.current
+        while (pg.firstChild) pg.removeChild(pg.firstChild)
+        const ns = 'http://www.w3.org/2000/svg'
+        const lastStop = stopLen[stopLen.length - 1]
+        const pieces = 40
+        const segs = []
+        const from = [0, 180, 216]
+        const to = [39, 93, 250]
+        for (let i = 0; i < pieces; i += 1) {
+            const start = (lastStop * i) / pieces
+            const end = (lastStop * (i + 1)) / pieces
+            const k0 = Math.floor(start / step)
+            const k1 = Math.min(count, Math.ceil(end / step))
+            let d = ''
+            let len = 0
+            for (let k = k0; k <= k1; k += 1) {
+                d += `${k === k0 ? 'M' : 'L'} ${xs[k].toFixed(1)} ${ys[k].toFixed(1)} `
+                if (k > k0) len += Math.hypot(xs[k] - xs[k - 1], ys[k] - ys[k - 1])
+            }
+            const f = (i + 0.5) / pieces
+            const color = `rgb(${from.map((c, q) => Math.round(c + (to[q] - c) * f)).join(',')})`
+            const els = ['glow', 'progress'].map((cls) => {
+                const el = document.createElementNS(ns, 'path')
+                el.setAttribute('class', cls)
+                el.setAttribute('d', d)
+                el.setAttribute('stroke', color)
+                el.style.strokeDasharray = String(len + 1)
+                pg.appendChild(el)
+                return el
+            })
+            segs.push({ start, len: len + 1, els })
+        }
+        tableRef.current = { L, xs, ys, ls, tru, cam, count, maxLen: L, toLen, segs }
 
         const a = anim.current
         scrollerRef.current.scrollTop = a.target * geo.D
@@ -493,34 +597,18 @@ const Journey = ({ letterClass }) => {
                                 <div
                                     className="journey-world"
                                     ref={worldRef}
-                                    style={{ width: geo.contentW, height: geo.sceneH }}
+                                    style={{ width: geo.worldW, height: geo.worldH }}
                                 >
                                     <svg
                                         className="journey-svg"
-                                        width={geo.contentW}
-                                        height={geo.sceneH}
-                                        viewBox={`0 0 ${geo.contentW} ${geo.sceneH}`}
+                                        width={geo.worldW}
+                                        height={geo.worldH}
+                                        viewBox={`0 0 ${geo.worldW} ${geo.worldH}`}
                                         aria-hidden="true"
                                     >
-                                        <defs>
-                                            <linearGradient
-                                                id="journeyGrad"
-                                                gradientUnits="userSpaceOnUse"
-                                                x1="0"
-                                                y1={geo.y0F}
-                                                x2="0"
-                                                y2={geo.yEndF}
-                                            >
-                                                <stop offset="0" stopColor="#00b4d8" />
-                                                <stop offset="1" stopColor="#275DFA" />
-                                            </linearGradient>
-                                        </defs>
                                         <path ref={trackPathRef} className="track" d={geo.d} />
-                                        <g ref={progRef}>
-                                            <path className="glow" d={geo.d} stroke="url(#journeyGrad)" />
-                                            <path className="progress" d={geo.d} stroke="url(#journeyGrad)" />
-                                        </g>
-                                        <circle className="origin" cx={geo.cx} cy={geo.y0F} r="5" />
+                                        <g ref={progRef} />
+                                        <circle className="origin" cx={geo.start.x} cy={geo.start.y} r="5" />
                                         {geo.nodes.map((n, i) => (
                                             <g
                                                 key={jobs[i].id}
@@ -529,7 +617,7 @@ const Journey = ({ letterClass }) => {
                                                     i < view.reached ? 'reached' : '',
                                                     view.active === i ? 'active' : '',
                                                 ].join(' ')}
-                                                transform={`translate(${n.x} ${n.yF})`}
+                                                transform={`translate(${n.x} ${n.y})`}
                                             >
                                                 <circle className="ring" r="22" />
                                                 <circle className="core" r="8" />
@@ -542,13 +630,6 @@ const Journey = ({ letterClass }) => {
                                     </svg>
                                 </div>
                             </div>
-
-                            <canvas
-                                ref={carCanvasRef}
-                                className="journey-car"
-                                aria-hidden="true"
-                                style={{ left: geo.aX - CAR_SIZE / 2, top: geo.aY - CAR_SIZE / 2 }}
-                            />
 
                             <div className="journey-cards">
                                 <div className="journey-intro" ref={introRef}>
@@ -585,6 +666,13 @@ const Journey = ({ letterClass }) => {
                                     )
                                 })}
                             </div>
+
+                            <canvas
+                                ref={carCanvasRef}
+                                className="journey-car"
+                                aria-hidden="true"
+                                style={{ left: geo.aX - CAR_SIZE / 2, top: geo.aY - CAR_SIZE / 2 }}
+                            />
                         </div>
                     </div>
                 )}
