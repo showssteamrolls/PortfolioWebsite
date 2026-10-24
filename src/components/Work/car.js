@@ -4,7 +4,7 @@
 
 import { splitWheels, ROLL_RADIUS } from './wheels'
 
-const LENGTH = 165 // px the car measures nose to tail on the ground
+const LENGTH = 99 // px the car measures nose to tail on the ground
 const ELEVATION = (36 * Math.PI) / 180 // matches the ground's 54deg tilt
 const FOV = 20
 
