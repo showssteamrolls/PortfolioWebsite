@@ -35,25 +35,32 @@ const useMedia = (query) => {
     return matches
 }
 
-// Lay the checkpoints out along the ground, alternating sides, joined by one
-// smooth curve. "j" is how far along the journey a point is (always increasing),
+// Lay the checkpoints out along the ground, joined by one smooth curve. "j" is how far along the journey a point is (always increasing),
 // and "yF" is its y on the ground plane (the journey runs toward smaller y).
 const buildGeometry = (w, h, n) => {
     const contentW = w - RAIL
     const cx = contentW / 2
     const S = Math.max(420, h * 0.68)
     const A = Math.min(contentW * 0.16, 220)
-    const wiggle = [1, 0.7, 1.1, 0.8, 1.05, 0.75]
+    // Where the line sits, in units of A, either side of the middle. It runs straight
+    // through the first stop, swings right at Wayfair, holds the bend through
+    // Techsalerator and Yiyang, then sweeps back left at Northeastern.
+    const lean = [0, 0.8, 1.2, 0.8, -1.2, -0.8]
     const D = S * n
     const y0F = D + 400
-    const cardW = Math.max(180, Math.min(360, cx - A * 1.1 - GAP - 30))
     const aX = cx
     const aY = Math.min(Math.max(h - 520, h * 0.34), h * 0.56) // leaves room under the open card
 
     const nodes = Array.from({ length: n }, (_, i) => {
-        const side = i % 2 === 0 ? -1 : 1
+        const x = cx + A * lean[i % lean.length]
+        // the card hangs below its stop, so it goes on the side the line is heading
+        // toward (the line arrives from the other side)
+        const prevX = i === 0 ? cx : cx + A * lean[i - 1]
+        const side = x >= prevX ? 1 : -1
+        const room = side < 0 ? x - GAP - 30 : contentW - x - GAP - 30
         return {
-            x: cx + side * A * wiggle[i % wiggle.length],
+            x,
+            w: Math.max(200, Math.min(400, room)),
             yF: y0F - S * (i + 1),
             j: S * (i + 1),
             side,
@@ -61,16 +68,22 @@ const buildGeometry = (w, h, n) => {
     })
 
     const pts = [{ x: cx, y: y0F }, ...nodes.map((nd) => ({ x: nd.x, y: nd.yF }))]
+    // smooth spline: each point's sideways slope comes from its neighbours
+    const slope = pts.map((q, i) => {
+        const p0 = pts[Math.max(0, i - 1)]
+        const p1 = pts[Math.min(pts.length - 1, i + 1)]
+        return i < 2 ? 0 : (p1.x - p0.x) / (p1.y - p0.y || 1) // straight up to the first stop
+    })
     let d = `M ${pts[0].x} ${pts[0].y}`
     for (let i = 1; i < pts.length; i += 1) {
         const a = pts[i - 1]
         const b = pts[i]
-        const k = (a.y - b.y) * 0.55
-        d += ` C ${a.x} ${a.y - k}, ${b.x} ${b.y + k}, ${b.x} ${b.y}`
+        const dy = (b.y - a.y) / 3
+        d += ` C ${a.x + slope[i - 1] * dy} ${a.y + dy}, ${b.x - slope[i] * dy} ${b.y - dy}, ${b.x} ${b.y}`
     }
 
     return {
-        contentW, cx, S, A, D, y0F, aX, aY, cardW, nodes, d,
+        contentW, cx, S, A, D, y0F, aX, aY, nodes, d,
         yEndF: nodes[n - 1].yF,
         titleBack: S * 0.45, // the title stands behind the start, so it sits below the marker and the path never crosses it
         sceneH: y0F + 300,
@@ -125,8 +138,8 @@ const JobCard = ({ job }) => {
                 <div className="job-titles">
                     <h2 className="job-company">{job.company}</h2>
                     <p className="job-role">
-                        {job.title}
-                        {job.subtitle ? ` · ${job.subtitle}` : ''}
+                        <span className="role-line">{job.title}</span>
+                        {job.subtitle ? <span className="role-line">{job.subtitle}</span> : null}
                     </p>
                 </div>
             </div>
@@ -523,9 +536,9 @@ const Journey = ({ letterClass }) => {
                                                     view.active === i ? 'open' : '',
                                                 ].join(' ')}
                                                 style={{
-                                                    left: n.side < 0 ? -(GAP + geo.cardW) : GAP,
+                                                    left: n.side < 0 ? -(GAP + n.w) : GAP,
                                                     top: -OFFSET,
-                                                    width: geo.cardW,
+                                                    width: n.w,
                                                 }}
                                             >
                                                 <JobCard job={job} />
