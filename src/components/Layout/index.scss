@@ -20,7 +20,6 @@
     animation-delay: 1s; 
 }
 
-.container.work-page,
 .container.contact-page,
 .container.about-page,
 .container.portfolio-page {
@@ -172,14 +171,6 @@
   }
 }
 
-.container.work-page {
-  .text-zone{
-    .timeline-container{
-      animation: slideInFromBottom 5s forwards;
-    }
-  }
-}
-
 @media screen and (max-width: 1000px){
   
   .page{
@@ -193,8 +184,7 @@
     min-height: auto;
 
     &.about-page, 
-    &.contact-page, 
-    &.work-page, 
+    &.contact-page,
     &.portfolio-page{
       .text-zone{
         position: initial; 

@@ -1,7 +1,465 @@
-.container.work-page{
-    .text-zone{
-        h1{
-            font-size: 50px;
+$blue: #357DED;
+$deep: #275DFA;
+$ink: #476ea0;
+$bg: #F4F5F7;
+
+@keyframes workFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes workPulse {
+    0% { transform: scale(0.6); opacity: 0.4; }
+    100% { transform: scale(1.7); opacity: 0; }
+}
+
+@keyframes workRing {
+    0% { transform: scale(0.8); opacity: 0.5; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+
+@keyframes workNudge {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(5px); }
+}
+
+.work-journey {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 60px;
+    background: $bg;
+    opacity: 0;
+    animation: workFade 1s 1s forwards;
+    font-family: sans-serif;
+
+    .journey-scroll {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scrollbar-width: none;
+        outline: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .journey-track {
+        position: relative;
+        width: 100%;
+    }
+
+    .journey-stage {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        overflow: hidden;
+        perspective: 1200px;
+    }
+
+    .journey-scene {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform-style: preserve-3d;
+        will-change: transform;
+    }
+
+    /* ---------- the line ---------- */
+
+    .journey-svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        overflow: visible;
+        pointer-events: none;
+
+        .track {
+            fill: none;
+            stroke: $blue;
+            stroke-opacity: 0.18;
+            stroke-width: 2;
+            stroke-linecap: round;
+        }
+
+        .glow {
+            fill: none;
+            stroke-width: 12;
+            stroke-opacity: 0.12;
+            stroke-linecap: round;
+        }
+
+        .progress {
+            fill: none;
+            stroke-width: 3;
+            stroke-linecap: round;
+        }
+
+        .origin {
+            fill: $bg;
+            stroke: $blue;
+            stroke-width: 1.5;
+            opacity: 0.6;
+        }
+
+        .node {
+            .core {
+                fill: $bg;
+                stroke: $blue;
+                stroke-width: 2;
+                transition: fill 0.4s ease;
+            }
+
+            .ring {
+                fill: none;
+                stroke: $blue;
+                stroke-width: 1;
+                opacity: 0;
+                transform-box: fill-box;
+                transform-origin: center;
+            }
+
+            &.reached .core {
+                fill: $blue;
+            }
+
+            &.active .ring {
+                animation: workRing 2.2s ease-out infinite;
+            }
+        }
+
+        .marker {
+            .halo {
+                fill: $blue;
+                opacity: 0.2;
+                transform-box: fill-box;
+                transform-origin: center;
+                animation: workPulse 2.2s ease-out infinite;
+            }
+
+            .dot {
+                fill: #fff;
+                stroke: $deep;
+                stroke-width: 2.5;
+            }
+        }
+    }
+
+    /* ---------- title ---------- */
+
+    .journey-intro {
+        position: absolute;
+        top: 20px;
+        left: 0;
+        text-align: center;
+
+        h1 {
+            margin: 0 0 14px;
+            font-family: 'Coolvetica';
+            font-size: 53px;
+            font-weight: 400;
+            color: $blue;
+        }
+
+        .hint {
+            margin: 0;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: $ink;
+            opacity: 0.8;
+        }
+
+        .chev {
+            display: inline-block;
+            margin-left: 6px;
+            animation: workNudge 1.6s ease-in-out infinite;
+        }
+    }
+
+    /* ---------- cards ---------- */
+
+    .job-card {
+        position: absolute;
+        will-change: transform, opacity;
+        color: $ink;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: #{8px};
+            width: 30px;
+            height: 1px;
+            background: $blue;
+            opacity: 0.45;
+        }
+
+        &.on-left {
+            text-align: right;
+
+            &::after { right: -38px; }
+        }
+
+        &.on-right {
+            text-align: left;
+
+            &::after { left: -38px; }
+        }
+    }
+
+    .job-dates {
+        display: block;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        line-height: 16px;
+        color: $blue;
+    }
+
+    .job-company {
+        margin: 8px 0 4px;
+        font-family: 'Coolvetica';
+        font-size: 30px;
+        font-weight: 400;
+        line-height: 1.1;
+        color: $deep;
+    }
+
+    .job-role {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.4;
+        color: $ink;
+    }
+
+    .job-more {
+        display: grid;
+        grid-template-rows: 0fr;
+        opacity: 0;
+        transition: grid-template-rows 0.6s cubic-bezier(0.22, 0.8, 0.2, 1), opacity 0.5s ease;
+    }
+
+    .job-more-inner {
+        min-height: 0;
+        overflow: hidden;
+        padding-top: 0;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .job-card.open .job-more {
+        grid-template-rows: 1fr;
+        opacity: 1;
+    }
+
+    .job-meta {
+        margin: 10px 0 0;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: $blue;
+        opacity: 0.75;
+    }
+
+    .job-line {
+        margin: 8px 0 0;
+        font-weight: 500;
+    }
+
+    .job-bullets {
+        margin: 8px 0 0;
+        padding: 0;
+        list-style: none;
+        counter-reset: bullet;
+
+        li {
+            position: relative;
+            margin: 6px 0;
+            counter-increment: bullet;
+            font-weight: 500;
+
+            &::before {
+                content: counter(bullet);
+                position: absolute;
+                top: 0;
+                font-size: 11px;
+                font-weight: 700;
+                color: $blue;
+            }
+        }
+    }
+
+    .job-card.on-left .job-bullets li {
+        padding-right: 20px;
+
+        &::before { right: 0; }
+    }
+
+    .job-card.on-right .job-bullets li {
+        padding-left: 20px;
+
+        &::before { left: 0; }
+    }
+
+    /* ---------- contents rail ---------- */
+
+    .journey-rail {
+        position: absolute;
+        top: 50%;
+        right: 24px;
+        z-index: 2;
+        width: 132px;
+        transform: translateY(-50%);
+
+        .rail-title {
+            display: block;
+            margin-bottom: 14px;
+            padding-right: 0;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-align: right;
+            text-transform: uppercase;
+            color: $blue;
+            opacity: 0.7;
+        }
+
+        ol {
+            position: relative;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: 14px;
+                right: 4px;
+                bottom: 14px;
+                width: 1px;
+                background: rgba($blue, 0.22);
+            }
+        }
+
+        button {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            width: 100%;
+            padding: 8px 0;
+            border: 0;
+            background: none;
+            cursor: pointer;
+            font: inherit;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            color: rgba($ink, 0.75);
+            transition: color 0.3s ease;
+
+            &:hover { color: $blue; }
+        }
+
+        .tick {
+            position: relative;
+            z-index: 1;
+            flex: none;
+            width: 9px;
+            height: 9px;
+            box-sizing: border-box;
+            border: 1.5px solid $blue;
+            border-radius: 50%;
+            background: $bg;
+            transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        li.reached .tick { background: $blue; }
+
+        li.active {
+            button {
+                font-weight: 700;
+                color: $deep;
+            }
+
+            .tick {
+                transform: scale(1.4);
+                box-shadow: 0 0 0 4px rgba($blue, 0.18);
+            }
+        }
+    }
+
+    /* ---------- small screens: plain stacked list ---------- */
+
+    &.compact {
+        top: 60px;
+        left: 0;
+        background: transparent;
+
+        .journey-scroll.flat {
+            box-sizing: border-box;
+            padding: 24px 20px 60px;
+
+            h1 {
+                margin: 0 0 24px;
+                font-family: 'Coolvetica';
+                font-size: 40px;
+                font-weight: 400;
+                color: #fff;
+            }
+        }
+
+        .flat-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .flat-card {
+            position: relative;
+            padding: 20px 22px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.95);
+            text-align: left;
+
+            &::after { display: none; }
+
+            .job-bullets li {
+                padding-left: 20px;
+                padding-right: 0;
+
+                &::before { left: 0; right: auto; }
+            }
+        }
+    }
+}
+
+@media (max-width: 1000px) {
+    .work-journey .journey-rail {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .work-journey {
+        .job-more { transition: none; }
+
+        .journey-svg .marker .halo,
+        .journey-svg .node.active .ring,
+        .journey-intro .chev {
+            animation: none;
         }
     }
 }
