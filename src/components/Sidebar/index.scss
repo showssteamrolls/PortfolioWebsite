@@ -213,6 +213,7 @@
         /* sit above the page so the menu button can be tapped; stays below the open menu (z-index 2) */
         .hamburger-icon {
             z-index: 1;
+            color: #275DFA; /* blue on the light page; the close icon stays white on the blue menu */
         }
     }
 }
