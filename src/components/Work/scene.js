@@ -160,7 +160,6 @@ void main() {
     float fi = abs(fract(iv - 0.5) - 0.5) / max(fwidth(iv), 1e-5);
     float major = 1.0 - clamp(fi * 0.55, 0.0, 1.0);
     vec3 blue = vec3(0.208, 0.490, 0.929);
-    col = mix(col, blue, line * 0.16 + major * 0.2);
 
     // melt into the page colour with distance and at the edges of the map
     float dist = length(vP - uCam);

@@ -121,20 +121,20 @@ $bg: #F4F5F7;
         }
 
         .core {
-            top: -9px;
-            left: -9px;
-            width: 18px;
-            height: 18px;
+            top: -17px;
+            left: -17px;
+            width: 34px;
+            height: 34px;
             background: $bg;
             border: 3px solid $blue;
             transition: background 0.4s ease;
         }
 
         .ring {
-            top: -24px;
-            left: -24px;
-            width: 48px;
-            height: 48px;
+            top: -30px;
+            left: -30px;
+            width: 60px;
+            height: 60px;
             border: 1.5px solid $blue;
             opacity: 0;
         }
