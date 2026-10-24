@@ -448,7 +448,9 @@ export const loadWorld = async (canvas) => {
         spin(distance)
 
         // lit part of the line behind the car
-        const upto = Math.min(n - 1, Math.max(0, Math.floor(Math.min(len, t.L) / t.step)))
+        // the trail starts afresh each time the car crosses the line
+        const inLap = len < 0 && len >= -PRE ? 0 : ((len % t.L) + t.L) % t.L
+        const upto = Math.min(n - 1, Math.floor(inLap / t.step))
         const cnt = upto * 6
         lit.geometry.setDrawRange(0, cnt)
         glow.geometry.setDrawRange(0, cnt)

@@ -45,7 +45,7 @@ const buildGeometry = (w, h, n) => {
     const dl = Math.hypot(b.x - a.x, b.z - a.z) || 1
 
     return {
-        contentW, S, D: S * (n + 1), aX, aY, nodes,
+        contentW, S, P: S * (n + 1), aX, aY, nodes,
         start: a,
         startDir: { x: (b.x - a.x) / dl, z: (b.z - a.z) / dl },
         titleBack: S * 0.45 + PRE + 60, // the title stands behind the start line, so the path never crosses it
@@ -172,8 +172,11 @@ const Journey = ({ letterClass, onFail }) => {
         const world = worldRef.current
         if (!g || !t || !world) return
 
-        const jm = p * g.D
-        const len = Math.min(TRACK.L + PRE, Math.max(-PRE, t.toLen(jm)))
+        // p is the scroll position in px; the middle lap of the scroll range is lap 0
+        const jm = p - g.P
+        const lap = Math.floor(jm / g.P)
+        const jmod = jm - lap * g.P
+        const len = t.toLen(jmod) + lap * TRACK.L
         const cam = sampleTrack(len).cam
         world.frame({ len, camYaw: reducedRef.current ? 0 : cam, distance: len })
 
@@ -200,8 +203,8 @@ const Journey = ({ letterClass, onFail }) => {
         let best = Infinity
         let reached = 0
         g.nodes.forEach((n, i) => {
-            const ahead = n.j - jm
-            if (n.j <= jm + 2) reached += 1
+            const ahead = ((((n.j - jmod) % g.P) + g.P + g.P / 2) % g.P) - g.P / 2
+            if (n.j <= jmod + 2) reached += 1
             if (Math.abs(ahead) < best) {
                 best = Math.abs(ahead)
                 active = i
@@ -217,7 +220,7 @@ const Journey = ({ letterClass, onFail }) => {
             g.start.x - g.startDir.x * g.titleBack,
             g.start.z - g.startDir.z * g.titleBack,
             0,
-            clamp01(1 - jm / (0.4 * g.S)),
+            jm < 0 ? clamp01(1 + jm / (0.2 * g.S)) : clamp01(1 - jm / (0.4 * g.S)),
             ' translate(-50%, -100%)'
         )
 
@@ -235,7 +238,7 @@ const Journey = ({ letterClass, onFail }) => {
         a.last = now
         const k = reducedRef.current ? 1 : 1 - Math.exp(-dt * 7)
         a.current += (a.target - a.current) * k
-        if (Math.abs(a.target - a.current) < 0.00004) a.current = a.target
+        if (Math.abs(a.target - a.current) < 0.05) a.current = a.target
         paint(a.current)
         a.raf = a.current === a.target ? 0 : requestAnimationFrame(tick)
     }, [paint])
@@ -295,19 +298,31 @@ const Journey = ({ letterClass, onFail }) => {
 
     // Whenever the geometry changes, rebuild the scroll-to-line mapping and repaint.
     useLayoutEffect(() => {
+        const prevGeo = geoRef.current
         geoRef.current = geo
         sizeRef.current = size
         if (!geo) return
         // scroll distance -> distance along the line; the last knot is the finish line
-        const toLen = monotone(
-            [0, ...geo.nodes.map((nd) => nd.j), geo.D],
-            [-PRE, ...geo.nodes.map((nd) => nd.len), TRACK.L + PRE]
-        )
+        // scroll distance -> distance along the line, repeating every lap. Three laps
+        // of knots keep the join between laps as smooth as everywhere else.
+        const baseX = [0, ...geo.nodes.map((nd) => nd.j)]
+        const baseY = [-PRE, ...geo.nodes.map((nd) => nd.len)]
+        const kx = []
+        const ky = []
+        for (let lap = -1; lap <= 2; lap += 1) {
+            baseX.forEach((x, i) => {
+                kx.push(x + lap * geo.P)
+                ky.push(baseY[i] + lap * TRACK.L)
+            })
+        }
+        const toLen = monotone(kx, ky)
         tableRef.current = { toLen }
         if (worldRef.current) worldRef.current.setSize(size.w, size.h, geo.aX, geo.aY)
 
         const a = anim.current
-        scrollerRef.current.scrollTop = a.target * geo.D
+        const frac = prevGeo ? a.target / prevGeo.P : 1
+        a.target = frac * geo.P
+        scrollerRef.current.scrollTop = a.target
         a.current = a.target
         paint(a.target)
     }, [geo, size, paint])
@@ -321,7 +336,18 @@ const Journey = ({ letterClass, onFail }) => {
         const g = geoRef.current
         if (!g) return
         const a = anim.current
-        a.target = clamp01(scrollerRef.current.scrollTop / g.D)
+        const el = scrollerRef.current
+        // endless: when the scroll position drifts toward either end, jump a whole
+        // lap, which looks identical
+        const top = el.scrollTop
+        if (top < 0.1 * g.P || top > 2.9 * g.P) {
+            const shift = top < g.P ? g.P : -g.P
+            el.scrollTop = top + shift
+            a.current += shift
+            a.target = top + shift
+        } else {
+            a.target = top
+        }
         kick()
     }
 
@@ -356,7 +382,7 @@ const Journey = ({ letterClass, onFail }) => {
             const now = performance.now()
             // pressing again mid-glide continues from where the last jump is heading
             const base = dest !== null && now - destAt < 900 ? dest : el.scrollTop
-            const stops = [0, ...g.nodes.map((n) => n.j)]
+            const stops = [0, 1, 2].flatMap((lap) => [0, ...g.nodes.map((n) => n.j)].map((j) => j + lap * g.P))
             const next = dir > 0
                 ? stops.find((s) => s > base + 20)
                 : [...stops].reverse().find((s) => s < base - 20)
@@ -400,8 +426,12 @@ const Journey = ({ letterClass, onFail }) => {
     const goTo = (i) => {
         const g = geoRef.current
         if (!g) return
+        // the nearest copy of this checkpoint, in whichever lap that is
+        const here = scrollerRef.current.scrollTop
+        const top = [0, 1, 2].map((lap) => g.nodes[i].j + lap * g.P)
+            .reduce((best, t) => (Math.abs(t - here) < Math.abs(best - here) ? t : best))
         scrollerRef.current.scrollTo({
-            top: g.nodes[i].j,
+            top,
             behavior: reducedRef.current ? 'auto' : 'smooth',
         })
     }
@@ -417,7 +447,7 @@ const Journey = ({ letterClass, onFail }) => {
                 aria-label="Work experience. Scroll to travel along the path."
             >
                 {geo && (
-                    <div className="journey-track" style={{ height: size.h + geo.D }}>
+                    <div className="journey-track" style={{ height: size.h + 3 * geo.P }}>
                         <div className="journey-stage" style={{ height: size.h }}>
                             <canvas ref={canvasRef} className="journey-gl" aria-hidden="true" />
 
