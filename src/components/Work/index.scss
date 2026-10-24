@@ -78,31 +78,12 @@ $bg: #F4F5F7;
         }
     }
 
-    .journey-plane {
+    .journey-gl {
         position: absolute;
         top: 0;
         left: 0;
-        will-change: transform;
-    }
-
-    .journey-world {
-        position: absolute;
-        top: 0;
-        left: 0;
-        transform-origin: 0 0;
-        will-change: transform;
-    }
-
-    .journey-car {
-        position: absolute;
-        z-index: 4;
-        width: 360px;
-        height: 360px;
+        z-index: 1;
         pointer-events: none;
-    }
-
-    .journey-stage.has-car .marker {
-        display: none;
     }
 
     .journey-cards {
@@ -125,102 +106,45 @@ $bg: #F4F5F7;
         will-change: transform, opacity;
     }
 
-    /* ---------- the line ---------- */
+    /* ---------- checkpoints ---------- */
 
-    .journey-svg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        overflow: visible;
-        pointer-events: none;
+    .card-anchor {
+        visibility: hidden;
+    }
 
-        /* the terrain: soft shading plus faint contour lines */
-        .topo-minor,
-        .topo-major {
-            fill: none;
-            stroke: $blue;
-            stroke-linejoin: round;
-            stroke-linecap: round;
+    .node-dot {
+        .core,
+        .ring {
+            position: absolute;
+            border-radius: 50%;
+            box-sizing: border-box;
         }
 
-        .topo-minor {
-            stroke-opacity: 0.13;
-            stroke-width: 2;
+        .core {
+            top: -9px;
+            left: -9px;
+            width: 18px;
+            height: 18px;
+            background: $bg;
+            border: 3px solid $blue;
+            transition: background 0.4s ease;
         }
 
-        .topo-major {
-            stroke-opacity: 0.25;
-            stroke-width: 3.2;
+        .ring {
+            top: -24px;
+            left: -24px;
+            width: 48px;
+            height: 48px;
+            border: 1.5px solid $blue;
+            opacity: 0;
         }
 
-        .track {
-            fill: none;
-            stroke: $blue;
-            stroke-opacity: 0.2;
-            stroke-width: 3;
-            stroke-linecap: round;
+        &.reached .core {
+            background: $blue;
         }
 
-        .glow {
-            fill: none;
-            stroke-width: 16;
-            stroke-opacity: 0.12;
-            stroke-linecap: round;
-        }
-
-        .progress {
-            fill: none;
-            stroke-width: 5;
-            stroke-linecap: round;
-        }
-
-        .origin {
-            fill: $bg;
-            stroke: $blue;
-            stroke-width: 2;
-            opacity: 0.6;
-        }
-
-        .node {
-            .core {
-                fill: $bg;
-                stroke: $blue;
-                stroke-width: 3;
-                transition: fill 0.4s ease;
-            }
-
-            .ring {
-                fill: none;
-                stroke: $blue;
-                stroke-width: 1.5;
-                opacity: 0;
-                transform-box: fill-box;
-                transform-origin: center;
-            }
-
-            &.reached .core {
-                fill: $blue;
-            }
-
-            &.active .ring {
-                animation: workRing 2.2s ease-out infinite;
-            }
-        }
-
-        .marker {
-            .halo {
-                fill: $blue;
-                opacity: 0.2;
-                transform-box: fill-box;
-                transform-origin: center;
-                animation: workPulse 2.2s ease-out infinite;
-            }
-
-            .dot {
-                fill: #fff;
-                stroke: $deep;
-                stroke-width: 3.5;
-            }
+        &.active .ring {
+            animation: workRing 2.2s ease-out infinite;
         }
     }
 
@@ -617,8 +541,7 @@ $bg: #F4F5F7;
     .work-journey {
         .job-more { transition: none; }
 
-        .journey-svg .marker .halo,
-        .journey-svg .node.active .ring {
+        .node-dot.active .ring {
             animation: none;
         }
     }

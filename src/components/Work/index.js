@@ -3,25 +3,16 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import Loader from 'react-loaders'
 import AnimatedLetters from '../AnimatedLetters'
 import signature from '../../assets/images/signature.png'
-import { loadCar, CAR_SIZE } from './car'
+import { loadWorld, sampleTrack, TRACK, PRE } from './scene'
 import workData from '../../data/work.json'
-import track from '../../data/laguna.json'
-import contours from '../../data/laguna-contours.json'
 
 const jobs = workData.jobs
 
 const OFFSET = 8 // px a card sits above its checkpoint so its first line meets the connector
 const GAP = 46 // px between a checkpoint and its card
 const RAIL = 150 // px reserved on the right for the contents rail
-
-// The path lies on a ground plane tilted away from the viewer. The camera
-// flies along it, so checkpoints ahead are smaller and nearer the horizon.
-const PERSPECTIVE = 1300
-const TILT_DEG = 54
-const TILT = (TILT_DEG * Math.PI) / 180
-const SIN = Math.sin(TILT)
-const COS = Math.cos(TILT)
 const KEY_SPEED = 650 // scroll px per second while W / S is held
+const CARD_W = 380
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v))
 
@@ -37,29 +28,10 @@ const useMedia = (query) => {
     return matches
 }
 
-// The circuit is Laguna Seca, traced from a map (src/data/laguna.json). The
-// journey starts on the start/finish line and stops at every other turn:
-// 1, 3, 5, 7, 9 and 11. "j" is scroll distance: every stop gets the same amount
-// of scrolling, however far apart the turns really are.
-const K = 7 // ground px per map px: how big the circuit is
-const MARGIN = 420 // room around the circuit for the signs
-const CARD_W = 380
-
-// Smooth curve through the traced points.
-const smoothPath = (pts) => {
-    const f = (v) => v.toFixed(1)
-    let d = `M ${f(pts[0].x)} ${f(pts[0].y)}`
-    for (let i = 0; i < pts.length - 1; i += 1) {
-        const p0 = pts[Math.max(0, i - 1)]
-        const p1 = pts[i]
-        const p2 = pts[i + 1]
-        const p3 = pts[Math.min(pts.length - 1, i + 2)]
-        d += ` C ${f(p1.x + (p2.x - p0.x) / 6)} ${f(p1.y + (p2.y - p0.y) / 6)},`
-            + ` ${f(p2.x - (p3.x - p1.x) / 6)} ${f(p2.y - (p3.y - p1.y) / 6)}, ${f(p2.x)} ${f(p2.y)}`
-    }
-    return d
-}
-
+// The circuit is Laguna Seca (see scene.js). The journey starts on the
+// start/finish line, stops at every other turn (1, 3, 5, 7, 9, 11) and ends back on
+// the line. "j" is scroll distance: every stop gets the same amount of scrolling,
+// however far apart the turns really are.
 const buildGeometry = (w, h, n) => {
     const contentW = w - RAIL
     const S = Math.max(420, h * 0.68)
@@ -67,28 +39,16 @@ const buildGeometry = (w, h, n) => {
     const aY = Math.min(Math.max(h - 520, h * 0.34), h * 0.56) // leaves room under the open card
     const cardW = Math.max(200, Math.min(CARD_W, aX - GAP - 30))
 
-    const pts = track.points.map(([x, y]) => ({ x: x * K + MARGIN, y: y * K + MARGIN }))
-    const nodes = track.stops.slice(0, n).map((si, i) => {
-        const p = pts[si]
-        const before = pts[Math.max(0, si - 4)]
-        const after = pts[Math.min(pts.length - 1, si + 4)]
-        const turn = (p.x - before.x) * (after.y - p.y) - (p.y - before.y) * (after.x - p.x)
-        // the card goes on the outside of the turn, away from where the line is heading
-        return { x: p.x, y: p.y, w: cardW, j: S * (i + 1), side: turn > 0 ? -1 : 1 }
-    })
-
-    const dx = pts[4].x - pts[0].x
-    const dy = pts[4].y - pts[0].y
-    const dl = Math.hypot(dx, dy) || 1
+    const nodes = TRACK.nodes.slice(0, n).map((nd, i) => ({ ...nd, w: cardW, j: S * (i + 1) }))
+    const a = sampleTrack(0)
+    const b = sampleTrack(60)
+    const dl = Math.hypot(b.x - a.x, b.z - a.z) || 1
 
     return {
-        contentW, S, D: S * n, aX, aY, nodes,
-        d: smoothPath(pts),
-        worldW: track.w * K + MARGIN * 2,
-        worldH: track.h * K + MARGIN * 2,
-        start: pts[0],
-        startDir: { x: dx / dl, y: dy / dl },
-        titleBack: S * 0.45, // the title stands behind the start line, so the path never crosses it
+        contentW, S, D: S * (n + 1), aX, aY, nodes,
+        start: a,
+        startDir: { x: (b.x - a.x) / dl, z: (b.z - a.z) / dl },
+        titleBack: S * 0.45 + PRE + 60, // the title stands behind the start line, so the path never crosses it
     }
 }
 
@@ -117,23 +77,6 @@ const monotone = (xs, ys) => {
         return (2 * u3 - 3 * u2 + 1) * ys[i] + (u3 - 2 * u2 + u) * h * m[i]
             + (-2 * u3 + 3 * u2) * ys[i + 1] + (u3 - u2) * h * m[i + 1]
     }
-}
-
-// Where the car is, and which way the camera and car face, at scroll distance j.
-// Angles are clockwise from straight up the page.
-const sample = (t, j) => {
-    const s = Math.min(t.maxLen, Math.max(0, t.toLen(j)))
-    let lo = 0
-    let hi = t.count
-    while (hi - lo > 1) {
-        const mid = (lo + hi) >> 1
-        if (t.ls[mid] <= s) lo = mid
-        else hi = mid
-    }
-    const span = t.ls[hi] - t.ls[lo] || 1
-    const f = clamp01((s - t.ls[lo]) / span)
-    const mix = (arr) => arr[lo] + (arr[hi] - arr[lo]) * f
-    return { x: mix(t.xs), y: mix(t.ys), len: s, cam: mix(t.cam), tru: mix(t.tru) }
 }
 
 // A rounded square for a company logo. Drop an image at
@@ -196,21 +139,17 @@ const Title = ({ letterClass }) => (
     </h1>
 )
 
-const Journey = ({ letterClass }) => {
+const Journey = ({ letterClass, onFail }) => {
     const reduced = useMedia('(prefers-reduced-motion: reduce)')
     const reducedRef = useRef(reduced)
     reducedRef.current = reduced
 
     const scrollerRef = useRef(null)
+    const canvasRef = useRef(null)
     const worldRef = useRef(null)
     const introRef = useRef(null)
-    const trackPathRef = useRef(null)
-    const progRef = useRef(null)
-    const markerRef = useRef(null)
-    const carCanvasRef = useRef(null)
-    const carRef = useRef(null)
-    const [hasCar, setHasCar] = useState(false)
     const cardRefs = useRef([])
+    const dotRefs = useRef([])
     const tableRef = useRef(null)
     const geoRef = useRef(null)
     const sizeRef = useRef({ w: 0, h: 0 })
@@ -224,57 +163,28 @@ const Journey = ({ letterClass }) => {
         [size]
     )
 
-    // Move the camera along the path for a given progress (0 to 1): turn and
-    // slide the ground under a fixed viewpoint, then place each sign where the
-    // same perspective puts its checkpoint. Runs every frame, so it writes
-    // straight to the DOM.
+    // Move the camera along the line for a given progress (0 to 1), then place
+    // each sign where the 3D scene says its checkpoint is. Runs every frame, so it
+    // writes straight to the DOM.
     const paint = useCallback((p) => {
         const g = geoRef.current
         const t = tableRef.current
-        if (!g || !t) return
+        const world = worldRef.current
+        if (!g || !t || !world) return
 
         const jm = p * g.D
-        const { x: mx, y: myF, len, cam, tru } = sample(t, jm)
-        const a = reducedRef.current ? 0 : -cam // the camera turns with the car
-        const cosA = Math.cos(a)
-        const sinA = Math.sin(a)
-
-        worldRef.current.style.transform =
-            `translate(${g.aX}px, ${g.aY}px) rotate(${a}rad) translate(${-mx}px, ${-myF}px)`
-        markerRef.current.setAttribute('transform', `translate(${mx.toFixed(2)} ${myF.toFixed(2)})`)
-        t.segs.forEach((sg) => {
-            const shown = Math.min(sg.len, Math.max(0, len - sg.start))
-            const off = String(sg.len - shown)
-            const vis = shown > 0.5 ? 'visible' : 'hidden'
-            sg.els.forEach((el) => {
-                el.style.strokeDashoffset = off
-                el.style.visibility = vis
-            })
-        })
-        anim.current.heading = tru + a // which way the car points on screen
-        anim.current.dist = len
-        if (carRef.current) carRef.current.update(anim.current.heading, len)
-
-        // Same maths the browser uses for the tilted ground, so signs line up with it.
-        const project = (wx, wy) => {
-            const dx = wx - mx
-            const dy = wy - myF
-            const vx = dx * cosA - dy * sinA
-            const vy = dx * sinA + dy * cosA
-            const denom = PERSPECTIVE - vy * SIN
-            if (denom < 0.15 * PERSPECTIVE) return null
-            const s = PERSPECTIVE / denom
-            return { x: g.aX + vx * s, y: g.aY + vy * COS * s, s }
-        }
+        const len = Math.min(TRACK.L + PRE, Math.max(-PRE, t.toLen(jm)))
+        const cam = sampleTrack(len).cam
+        world.frame({ len, camYaw: reducedRef.current ? 0 : cam, distance: len })
 
         // Signs ahead fade slowly into the horizon; ones behind us fade fast.
         const fade = (ahead) => (ahead >= 0
             ? clamp01(1 - Math.max(0, ahead - 0.2 * g.S) / (2.6 * g.S))
             : clamp01(1 + ahead / (0.55 * g.S)))
 
-        const place = (el, wx, wy, op, suffix) => {
+        const place = (el, wx, wz, lift, op, suffix) => {
             if (!el) return
-            const pr = op > 0.01 ? project(wx, wy) : null
+            const pr = op > 0.01 ? world.project(wx, wz, lift) : null
             if (!pr) {
                 el.style.visibility = 'hidden'
                 return
@@ -296,14 +206,17 @@ const Journey = ({ letterClass }) => {
                 best = Math.abs(ahead)
                 active = i
             }
-            place(cardRefs.current[i], n.x, n.y, fade(ahead))
+            const op = fade(ahead)
+            place(cardRefs.current[i], n.x, n.z, 0, op)
+            place(dotRefs.current[i], n.x, n.z, 6, op)
         })
         if (best > g.S * 0.5) active = -1
 
         place(
             introRef.current,
             g.start.x - g.startDir.x * g.titleBack,
-            g.start.y - g.startDir.y * g.titleBack,
+            g.start.z - g.startDir.z * g.titleBack,
+            0,
             clamp01(1 - jm / (0.4 * g.S)),
             ' translate(-50%, -100%)'
         )
@@ -335,27 +248,33 @@ const Journey = ({ letterClass }) => {
         }
     }, [tick])
 
-    // Bring in the race car once the page is up; keep the dot if it can't load.
+    // Build the 3D world once the page is up. If the browser can't (no WebGL,
+    // model missing), fall back to the plain list.
     useEffect(() => {
         let dead = false
-        let car = null
-        if (!geo || !carCanvasRef.current) return undefined
-        loadCar(carCanvasRef.current, CAR_SIZE)
-            .then((c) => {
+        let w = null
+        if (!geo) return undefined
+        loadWorld(canvasRef.current)
+            .then((world) => {
                 if (dead) {
-                    c.dispose()
+                    world.dispose()
                     return
                 }
-                car = c
-                carRef.current = c
-                c.update(anim.current.heading || 0, anim.current.dist || 0)
-                setHasCar(true)
+                w = world
+                worldRef.current = world
+                const s = sizeRef.current
+                const g = geoRef.current
+                if (g) world.setSize(s.w, s.h, g.aX, g.aY)
+                paint(anim.current.current)
             })
-            .catch(() => {})
+            .catch((err) => {
+                console.warn('Work scene unavailable, showing the list instead.', err)
+                if (!dead) onFail()
+            })
         return () => {
             dead = true
-            carRef.current = null
-            if (car) car.dispose()
+            worldRef.current = null
+            if (w) w.dispose()
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [!!geo])
@@ -374,97 +293,18 @@ const Journey = ({ letterClass }) => {
         return () => ro.disconnect()
     }, [])
 
-    // Whenever the geometry changes, re-measure the line and repaint.
+    // Whenever the geometry changes, rebuild the scroll-to-line mapping and repaint.
     useLayoutEffect(() => {
         geoRef.current = geo
         sizeRef.current = size
-        const path = trackPathRef.current
-        if (!geo || !path) return
-
-        const L = path.getTotalLength()
-        const step = 4
-        const count = Math.ceil(L / step)
-        const xs = new Float64Array(count + 1)
-        const ys = new Float64Array(count + 1)
-        const ls = new Float64Array(count + 1)
-        for (let k = 0; k <= count; k += 1) {
-            const len = Math.min(k * step, L)
-            const pt = path.getPointAtLength(len)
-            xs[k] = pt.x
-            ys[k] = pt.y
-            ls[k] = len
-        }
-
-        // which way the line points at each sample (unwrapped so turns can pass 180deg)
-        const tru = new Float64Array(count + 1)
-        for (let k = 0; k <= count; k += 1) {
-            const lo = Math.max(0, k - 3)
-            const hi = Math.min(count, k + 3)
-            tru[k] = Math.atan2(xs[hi] - xs[lo], -(ys[hi] - ys[lo]))
-            if (k > 0) {
-                while (tru[k] - tru[k - 1] > Math.PI) tru[k] -= 2 * Math.PI
-                while (tru[k] - tru[k - 1] < -Math.PI) tru[k] += 2 * Math.PI
-            }
-        }
-        // the camera looks a little ahead and eases through bends
-        const pre = new Float64Array(count + 2)
-        for (let k = 0; k <= count; k += 1) pre[k + 1] = pre[k] + tru[k]
-        const cam = new Float64Array(count + 1)
-        for (let k = 0; k <= count; k += 1) {
-            const lo = Math.max(0, k - 15)
-            const hi = Math.min(count, k + 45)
-            cam[k] = (pre[hi + 1] - pre[lo]) / (hi - lo + 1)
-        }
-
-        // distance along the line at each stop, then the scroll-to-line mapping
-        const stopLen = geo.nodes.map((nd) => {
-            let best = 0
-            let bd = Infinity
-            for (let k = 0; k <= count; k += 1) {
-                const d2 = (xs[k] - nd.x) ** 2 + (ys[k] - nd.y) ** 2
-                if (d2 < bd) {
-                    bd = d2
-                    best = k
-                }
-            }
-            return ls[best]
-        })
-        const toLen = monotone([0, ...geo.nodes.map((nd) => nd.j)], [0, ...stopLen])
-
-        // the lit line behind the car, in short pieces so the colour can shift along it
-        const pg = progRef.current
-        while (pg.firstChild) pg.removeChild(pg.firstChild)
-        const ns = 'http://www.w3.org/2000/svg'
-        const lastStop = stopLen[stopLen.length - 1]
-        const pieces = 40
-        const segs = []
-        const from = [0, 180, 216]
-        const to = [39, 93, 250]
-        for (let i = 0; i < pieces; i += 1) {
-            const start = (lastStop * i) / pieces
-            const end = (lastStop * (i + 1)) / pieces
-            const k0 = Math.floor(start / step)
-            const k1 = Math.min(count, Math.ceil(end / step))
-            let d = ''
-            let len = 0
-            for (let k = k0; k <= k1; k += 1) {
-                d += `${k === k0 ? 'M' : 'L'} ${xs[k].toFixed(1)} ${ys[k].toFixed(1)} `
-                if (k > k0) len += Math.hypot(xs[k] - xs[k - 1], ys[k] - ys[k - 1])
-            }
-            const f = (i + 0.5) / pieces
-            const color = `rgb(${from.map((c, q) => Math.round(c + (to[q] - c) * f)).join(',')})`
-            const els = ['glow', 'progress'].map((cls) => {
-                const el = document.createElementNS(ns, 'path')
-                el.setAttribute('class', cls)
-                el.setAttribute('d', d)
-                el.setAttribute('stroke', color)
-                el.style.strokeDasharray = String(len + 1)
-                pg.appendChild(el)
-                return el
-            })
-            segs.push({ start, len: len + 1, els })
-        }
-        tableRef.current = { L, xs, ys, ls, tru, cam, count, maxLen: L, toLen, segs }
+        if (!geo) return
+        // scroll distance -> distance along the line; the last knot is the finish line
+        const toLen = monotone(
+            [0, ...geo.nodes.map((nd) => nd.j), geo.D],
+            [-PRE, ...geo.nodes.map((nd) => nd.len), TRACK.L + PRE]
+        )
+        tableRef.current = { toLen }
+        if (worldRef.current) worldRef.current.setSize(size.w, size.h, geo.aX, geo.aY)
 
         const a = anim.current
         scrollerRef.current.scrollTop = a.target * geo.D
@@ -578,70 +418,8 @@ const Journey = ({ letterClass }) => {
             >
                 {geo && (
                     <div className="journey-track" style={{ height: size.h + geo.D }}>
-                        <div
-                            className={`journey-stage${hasCar ? ' has-car' : ''}`}
-                            style={{
-                                height: size.h,
-                                perspective: `${PERSPECTIVE}px`,
-                                perspectiveOrigin: `${geo.aX}px ${geo.aY}px`,
-                            }}
-                        >
-                            <div
-                                className="journey-plane"
-                                style={{
-                                    width: geo.contentW,
-                                    height: size.h,
-                                    transformOrigin: `${geo.aX}px ${geo.aY}px`,
-                                    transform: `rotateX(${TILT_DEG}deg)`,
-                                }}
-                            >
-                                <div
-                                    className="journey-world"
-                                    ref={worldRef}
-                                    style={{ width: geo.worldW, height: geo.worldH }}
-                                >
-                                    <svg
-                                        className="journey-svg"
-                                        width={geo.worldW}
-                                        height={geo.worldH}
-                                        viewBox={`0 0 ${geo.worldW} ${geo.worldH}`}
-                                        aria-hidden="true"
-                                    >
-                                        <image
-                                            className="relief"
-                                            href={`${process.env.PUBLIC_URL}/topo/laguna-relief.webp`}
-                                            x="0"
-                                            y="0"
-                                            width={geo.worldW}
-                                            height={geo.worldH}
-                                            preserveAspectRatio="none"
-                                        />
-                                        <path className="topo-minor" d={contours.minor} />
-                                        <path className="topo-major" d={contours.major} />
-                                        <path ref={trackPathRef} className="track" d={geo.d} />
-                                        <g ref={progRef} />
-                                        <circle className="origin" cx={geo.start.x} cy={geo.start.y} r="5" />
-                                        {geo.nodes.map((n, i) => (
-                                            <g
-                                                key={jobs[i].id}
-                                                className={[
-                                                    'node',
-                                                    i < view.reached ? 'reached' : '',
-                                                    view.active === i ? 'active' : '',
-                                                ].join(' ')}
-                                                transform={`translate(${n.x} ${n.y})`}
-                                            >
-                                                <circle className="ring" r="22" />
-                                                <circle className="core" r="8" />
-                                            </g>
-                                        ))}
-                                        <g ref={markerRef} className="marker">
-                                            <circle className="halo" r="22" />
-                                            <circle className="dot" r="7" />
-                                        </g>
-                                    </svg>
-                                </div>
-                            </div>
+                        <div className="journey-stage" style={{ height: size.h }}>
+                            <canvas ref={canvasRef} className="journey-gl" aria-hidden="true" />
 
                             <div className="journey-cards">
                                 <div className="journey-intro" ref={introRef}>
@@ -656,36 +434,42 @@ const Journey = ({ letterClass }) => {
                                 {jobs.map((job, i) => {
                                     const n = geo.nodes[i]
                                     return (
-                                        <div
-                                            key={job.id}
-                                            className="card-anchor"
-                                            ref={(el) => { cardRefs.current[i] = el }}
-                                        >
-                                            <article
+                                        <div key={job.id}>
+                                            <div
                                                 className={[
-                                                    'job-card',
-                                                    n.side < 0 ? 'on-left' : 'on-right',
-                                                    view.active === i ? 'open' : '',
+                                                    'card-anchor',
+                                                    'node-dot',
+                                                    i < view.reached ? 'reached' : '',
+                                                    view.active === i ? 'active' : '',
                                                 ].join(' ')}
-                                                style={{
-                                                    left: n.side < 0 ? -(GAP + n.w) : GAP,
-                                                    top: -OFFSET,
-                                                    width: n.w,
-                                                }}
+                                                ref={(el) => { dotRefs.current[i] = el }}
                                             >
-                                                <JobCard job={job} />
-                                            </article>
+                                                <span className="ring" />
+                                                <span className="core" />
+                                            </div>
+                                            <div
+                                                className="card-anchor"
+                                                ref={(el) => { cardRefs.current[i] = el }}
+                                            >
+                                                <article
+                                                    className={[
+                                                        'job-card',
+                                                        n.side < 0 ? 'on-left' : 'on-right',
+                                                        view.active === i ? 'open' : '',
+                                                    ].join(' ')}
+                                                    style={{
+                                                        left: n.side < 0 ? -(GAP + n.w) : GAP,
+                                                        top: -OFFSET,
+                                                        width: n.w,
+                                                    }}
+                                                >
+                                                    <JobCard job={job} />
+                                                </article>
+                                            </div>
                                         </div>
                                     )
                                 })}
                             </div>
-
-                            <canvas
-                                ref={carCanvasRef}
-                                className="journey-car"
-                                aria-hidden="true"
-                                style={{ left: geo.aX - CAR_SIZE / 2, top: geo.aY - CAR_SIZE / 2 }}
-                            />
                         </div>
                     </div>
                 )}
@@ -715,6 +499,7 @@ const Journey = ({ letterClass }) => {
     )
 }
 
+
 // Small screens and tablets: a plain stacked list, no camera.
 const FlatList = ({ letterClass }) => (
     <div className="journey-scroll flat">
@@ -731,6 +516,7 @@ const FlatList = ({ letterClass }) => (
 
 const Work = () => {
     const compact = useMedia('(max-width: 1000px)')
+    const [failed, setFailed] = useState(false)
     const [letterClass, setLetterClass] = useState('text-animate')
 
     useEffect(() => {
@@ -740,10 +526,13 @@ const Work = () => {
         return () => clearTimeout(timerId)
     }, [])
 
+    const flat = compact || failed
     return (
         <>
-            <div className={`work-journey${compact ? ' compact' : ''}`}>
-                {compact ? <FlatList letterClass={letterClass} /> : <Journey letterClass={letterClass} />}
+            <div className={`work-journey${flat ? ' compact' : ''}`}>
+                {flat
+                    ? <FlatList letterClass={letterClass} />
+                    : <Journey letterClass={letterClass} onFail={() => setFailed(true)} />}
             </div>
             <Loader type="pacman" />
         </>
