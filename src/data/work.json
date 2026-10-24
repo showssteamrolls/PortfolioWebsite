@@ -2,6 +2,7 @@
     "jobs": [
         {
             "id": "klaviyo",
+            "logo": "",
             "short": "Klaviyo",
             "company": "Klaviyo",
             "title": "Data Analyst",
@@ -17,6 +18,7 @@
         },
         {
             "id": "wayfair",
+            "logo": "",
             "short": "Wayfair",
             "company": "Wayfair",
             "title": "Data Analyst",
@@ -37,6 +39,7 @@
         },
         {
             "id": "techsalerator",
+            "logo": "",
             "short": "Techsalerator",
             "company": "Techsalerator",
             "title": "Data Consultant",
@@ -49,6 +52,7 @@
         },
         {
             "id": "yiyang",
+            "logo": "",
             "short": "Yiyang",
             "company": "Yiyang Education",
             "title": "Machine Learning Instructor",
@@ -63,6 +67,7 @@
         },
         {
             "id": "northeastern-ta",
+            "logo": "",
             "short": "Northeastern",
             "company": "Northeastern University",
             "title": "Graduate TA",
@@ -75,6 +80,7 @@
         },
         {
             "id": "ocdl",
+            "logo": "",
             "short": "OC Debate",
             "company": "Orange County Debate League",
             "title": "Assistant Debate Instructor",

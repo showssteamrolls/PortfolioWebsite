@@ -10,6 +10,17 @@ const OFFSET = 8 // px a card sits above its checkpoint so its first line meets 
 const GAP = 46 // px between a checkpoint and its card
 const RAIL = 150 // px reserved on the right for the contents rail
 
+// The path lies on a ground plane tilted away from the viewer. The camera
+// flies along it, so checkpoints ahead are smaller and nearer the horizon.
+const PERSPECTIVE = 1300
+const TILT_DEG = 54
+const TILT = (TILT_DEG * Math.PI) / 180
+const SIN = Math.sin(TILT)
+const COS = Math.cos(TILT)
+const HEADING = 0.5 // how much the camera turns to follow the bends (0 = never)
+
+const clamp01 = (v) => Math.min(1, Math.max(0, v))
+
 const useMedia = (query) => {
     const [matches, setMatches] = useState(() => window.matchMedia(query).matches)
     useEffect(() => {
@@ -22,51 +33,84 @@ const useMedia = (query) => {
     return matches
 }
 
-// Lay the checkpoints out down the page, alternating sides, and join them with
-// one smooth curve. Every checkpoint has a vertical tangent, so the line is
-// monotonic in y: scroll position maps cleanly onto a point on the line.
+// Lay the checkpoints out along the ground, alternating sides, joined by one
+// smooth curve. "j" is how far along the journey a point is (always increasing),
+// and "yF" is its y on the ground plane (the journey runs toward smaller y).
 const buildGeometry = (w, h, n) => {
     const contentW = w - RAIL
     const cx = contentW / 2
-    const S = Math.max(380, h * 0.72)
-    const A = Math.min(contentW * 0.13, 180)
+    const S = Math.max(520, h * 0.85)
+    const A = Math.min(contentW * 0.16, 220)
     const wiggle = [1, 0.7, 1.1, 0.8, 1.05, 0.75]
-    const y0 = 170
+    const D = S * n
+    const y0F = D + 400
     const cardW = Math.max(180, Math.min(360, cx - A * 1.1 - GAP - 30))
+    const aX = cx
+    const aY = Math.min(Math.max(h - 520, h * 0.34), h * 0.56) // leaves room under the open card
 
     const nodes = Array.from({ length: n }, (_, i) => {
         const side = i % 2 === 0 ? -1 : 1
-        return { x: cx + side * A * wiggle[i % wiggle.length], y: y0 + S * (i + 1), side }
+        return {
+            x: cx + side * A * wiggle[i % wiggle.length],
+            yF: y0F - S * (i + 1),
+            j: S * (i + 1),
+            side,
+        }
     })
 
-    const pts = [{ x: cx, y: y0 }, ...nodes]
+    const pts = [{ x: cx, y: y0F }, ...nodes.map((nd) => ({ x: nd.x, y: nd.yF }))]
     let d = `M ${pts[0].x} ${pts[0].y}`
     for (let i = 1; i < pts.length; i += 1) {
         const a = pts[i - 1]
         const b = pts[i]
-        const k = (b.y - a.y) * 0.55
-        d += ` C ${a.x} ${a.y + k}, ${b.x} ${b.y - k}, ${b.x} ${b.y}`
+        const k = (a.y - b.y) * 0.55
+        d += ` C ${a.x} ${a.y - k}, ${b.x} ${b.y + k}, ${b.x} ${b.y}`
     }
 
-    const yEnd = nodes[n - 1].y
-    return { contentW, cx, S, y0, yEnd, cardW, nodes, d, sceneH: yEnd + h }
+    return {
+        contentW, cx, S, A, D, y0F, aX, aY, cardW, nodes, d,
+        yEndF: nodes[n - 1].yF,
+        titleBack: S * 0.45, // the title stands behind the start, so it sits below the marker and the path never crosses it
+        sceneH: y0F + 300,
+    }
 }
 
-// Look up the point on the line at a given y using a precomputed table.
-const sample = (t, y) => {
+// Look up the point on the line at a given journey distance.
+const sample = (t, j) => {
     let lo = 0
     let hi = t.count
     while (hi - lo > 1) {
         const mid = (lo + hi) >> 1
-        if (t.ys[mid] <= y) lo = mid
+        if (t.js[mid] <= j) lo = mid
         else hi = mid
     }
-    const span = t.ys[hi] - t.ys[lo] || 1
-    const f = Math.min(1, Math.max(0, (y - t.ys[lo]) / span))
+    const span = t.js[hi] - t.js[lo] || 1
+    const f = clamp01((j - t.js[lo]) / span)
     return {
         x: t.xs[lo] + (t.xs[hi] - t.xs[lo]) * f,
         len: t.ls[lo] + (t.ls[hi] - t.ls[lo]) * f,
+        slope: (t.xs[hi] - t.xs[lo]) / span,
     }
+}
+
+// A rounded square for a company logo. Drop an image at
+// public/work-logos/<job id>.png (or set "logo" in work.json) and it appears;
+// until then a soft placeholder with the company's first letter is shown.
+const JobLogo = ({ job }) => {
+    const [loaded, setLoaded] = useState(false)
+    const src = job.logo || `${process.env.PUBLIC_URL}/work-logos/${job.id}.png`
+    return (
+        <div className="job-logo" role="img" aria-label={`${job.company} logo`}>
+            <span className="job-logo-initial">{job.company.charAt(0)}</span>
+            <img
+                src={src}
+                alt=""
+                className={loaded ? 'is-loaded' : ''}
+                onLoad={() => setLoaded(true)}
+                onError={() => setLoaded(false)}
+            />
+        </div>
+    )
 }
 
 const JobCard = ({ job }) => {
@@ -74,11 +118,16 @@ const JobCard = ({ job }) => {
     return (
         <>
             <span className="job-dates">{job.dates}</span>
-            <h2 className="job-company">{job.company}</h2>
-            <p className="job-role">
-                {job.title}
-                {job.subtitle ? ` · ${job.subtitle}` : ''}
-            </p>
+            <div className="job-head">
+                <JobLogo job={job} />
+                <div className="job-titles">
+                    <h2 className="job-company">{job.company}</h2>
+                    <p className="job-role">
+                        {job.title}
+                        {job.subtitle ? ` · ${job.subtitle}` : ''}
+                    </p>
+                </div>
+            </div>
             <div className="job-more">
                 <div className="job-more-inner">
                     <p className="job-meta">{meta}</p>
@@ -110,7 +159,8 @@ const Journey = ({ letterClass }) => {
     reducedRef.current = reduced
 
     const scrollerRef = useRef(null)
-    const sceneRef = useRef(null)
+    const worldRef = useRef(null)
+    const introRef = useRef(null)
     const trackPathRef = useRef(null)
     const progRef = useRef(null)
     const markerRef = useRef(null)
@@ -128,45 +178,84 @@ const Journey = ({ letterClass }) => {
         [size]
     )
 
-    // Move the camera, the marker, the drawn line and the cards for a given
-    // progress (0 to 1). Runs every frame, so it writes straight to the DOM.
+    // Move the camera along the path for a given progress (0 to 1): turn and
+    // slide the ground under a fixed viewpoint, then place each sign where the
+    // same perspective puts its checkpoint. Runs every frame, so it writes
+    // straight to the DOM.
     const paint = useCallback((p) => {
         const g = geoRef.current
         const t = tableRef.current
         if (!g || !t) return
-        const h = sizeRef.current.h
-        const my = g.y0 + p * (g.yEnd - g.y0)
-        const { x: mx, len } = sample(t, my)
 
-        sceneRef.current.style.transform =
-            `translate3d(${(-(mx - g.cx) * 0.25).toFixed(2)}px, ${(h * 0.42 - my).toFixed(2)}px, 0)`
-        markerRef.current.setAttribute('transform', `translate(${mx.toFixed(2)} ${my.toFixed(2)})`)
+        const jm = p * g.D
+        const { x: mx, len, slope } = sample(t, jm)
+        const myF = g.y0F - jm
+        const a = reducedRef.current ? 0 : -Math.atan(slope) * HEADING
+        const cosA = Math.cos(a)
+        const sinA = Math.sin(a)
+
+        worldRef.current.style.transform =
+            `translate(${g.aX}px, ${g.aY}px) rotate(${a}rad) translate(${-mx}px, ${-myF}px)`
+        markerRef.current.setAttribute('transform', `translate(${mx.toFixed(2)} ${myF.toFixed(2)})`)
         progRef.current.style.strokeDashoffset = String(t.L - len)
+
+        // Same maths the browser uses for the tilted ground, so signs line up with it.
+        const project = (wx, wy) => {
+            const dx = wx - mx
+            const dy = wy - myF
+            const vx = dx * cosA - dy * sinA
+            const vy = dx * sinA + dy * cosA
+            const denom = PERSPECTIVE - vy * SIN
+            if (denom < 0.15 * PERSPECTIVE) return null
+            const s = PERSPECTIVE / denom
+            return { x: g.aX + vx * s, y: g.aY + vy * COS * s, s }
+        }
+
+        // Signs ahead fade slowly into the horizon; ones behind us fade fast.
+        const fade = (ahead) => (ahead >= 0
+            ? clamp01(1 - Math.max(0, ahead - 0.2 * g.S) / (2.6 * g.S))
+            : clamp01(1 + ahead / (0.55 * g.S)))
+
+        const place = (el, wx, wy, op, suffix) => {
+            if (!el) return
+            const pr = op > 0.01 ? project(wx, wy) : null
+            if (!pr) {
+                el.style.visibility = 'hidden'
+                return
+            }
+            el.style.visibility = 'visible'
+            el.style.opacity = op.toFixed(3)
+            el.style.zIndex = String(Math.round(pr.s * 100))
+            el.style.transform =
+                `translate(${pr.x.toFixed(1)}px, ${pr.y.toFixed(1)}px) scale(${pr.s.toFixed(4)})${suffix || ''}`
+        }
 
         let active = -1
         let best = Infinity
         let reached = 0
         g.nodes.forEach((n, i) => {
-            const dy = Math.abs(n.y - my)
-            if (n.y <= my + 2) reached += 1
-            if (dy < best) {
-                best = dy
+            const ahead = n.j - jm
+            if (n.j <= jm + 2) reached += 1
+            if (Math.abs(ahead) < best) {
+                best = Math.abs(ahead)
                 active = i
             }
-            const el = cardRefs.current[i]
-            if (el) {
-                const near = Math.max(0, Math.min(1, 1 - (dy - 0.25 * h) / (0.6 * h)))
-                const z = reducedRef.current ? 0 : -Math.min(dy, h) * 0.22
-                el.style.opacity = (0.1 + 0.9 * near).toFixed(3)
-                el.style.transform = `translate3d(0, ${-OFFSET}px, ${z.toFixed(1)}px)`
-            }
+            place(cardRefs.current[i], n.x, n.yF, fade(ahead))
         })
         if (best > g.S * 0.5) active = -1
 
-        const a = anim.current
-        if (a.active !== active || a.reached !== reached) {
-            a.active = active
-            a.reached = reached
+        place(
+            introRef.current,
+            g.cx,
+            g.y0F + g.titleBack,
+            clamp01(1 - jm / (0.4 * g.S)),
+            ' translate(-50%, -100%)'
+        )
+
+        const an = anim.current
+        if (an.active !== active || an.reached !== reached) {
+            an.active = active
+            an.reached = reached
             setView({ active, reached })
         }
     }, [])
@@ -214,20 +303,20 @@ const Journey = ({ letterClass }) => {
         const L = path.getTotalLength()
         const count = 800
         const xs = new Float64Array(count + 1)
-        const ys = new Float64Array(count + 1)
+        const js = new Float64Array(count + 1)
         const ls = new Float64Array(count + 1)
         for (let k = 0; k <= count; k += 1) {
             const len = (L * k) / count
             const pt = path.getPointAtLength(len)
             xs[k] = pt.x
-            ys[k] = pt.y
+            js[k] = geo.y0F - pt.y
             ls[k] = len
         }
-        tableRef.current = { L, xs, ys, ls, count }
+        tableRef.current = { L, xs, js, ls, count }
         progRef.current.style.strokeDasharray = String(L)
 
         const a = anim.current
-        scrollerRef.current.scrollTop = a.target * (geo.yEnd - geo.y0)
+        scrollerRef.current.scrollTop = a.target * geo.D
         a.current = a.target
         paint(a.target)
     }, [geo, size, paint])
@@ -241,7 +330,7 @@ const Journey = ({ letterClass }) => {
         const g = geoRef.current
         if (!g) return
         const a = anim.current
-        a.target = Math.min(1, Math.max(0, scrollerRef.current.scrollTop / (g.yEnd - g.y0)))
+        a.target = clamp01(scrollerRef.current.scrollTop / g.D)
         kick()
     }
 
@@ -249,7 +338,7 @@ const Journey = ({ letterClass }) => {
         const g = geoRef.current
         if (!g) return
         scrollerRef.current.scrollTo({
-            top: g.nodes[i].y - g.y0,
+            top: g.nodes[i].j,
             behavior: reducedRef.current ? 'auto' : 'smooth',
         })
     }
@@ -265,63 +354,79 @@ const Journey = ({ letterClass }) => {
                 aria-label="Work experience. Scroll to travel along the path."
             >
                 {geo && (
-                    <div className="journey-track" style={{ height: size.h + (geo.yEnd - geo.y0) }}>
+                    <div className="journey-track" style={{ height: size.h + geo.D }}>
                         <div
                             className="journey-stage"
-                            style={{ height: size.h, perspectiveOrigin: `${geo.cx}px ${size.h * 0.42}px` }}
+                            style={{
+                                height: size.h,
+                                perspective: `${PERSPECTIVE}px`,
+                                perspectiveOrigin: `${geo.aX}px ${geo.aY}px`,
+                            }}
                         >
                             <div
-                                className="journey-scene"
-                                ref={sceneRef}
-                                style={{ width: geo.contentW, height: geo.sceneH }}
+                                className="journey-plane"
+                                style={{
+                                    width: geo.contentW,
+                                    height: size.h,
+                                    transformOrigin: `${geo.aX}px ${geo.aY}px`,
+                                    transform: `rotateX(${TILT_DEG}deg)`,
+                                }}
                             >
-                                <svg
-                                    className="journey-svg"
-                                    width={geo.contentW}
-                                    height={geo.sceneH}
-                                    viewBox={`0 0 ${geo.contentW} ${geo.sceneH}`}
-                                    aria-hidden="true"
+                                <div
+                                    className="journey-world"
+                                    ref={worldRef}
+                                    style={{ width: geo.contentW, height: geo.sceneH }}
                                 >
-                                    <defs>
-                                        <linearGradient
-                                            id="journeyGrad"
-                                            gradientUnits="userSpaceOnUse"
-                                            x1="0"
-                                            y1={geo.y0}
-                                            x2="0"
-                                            y2={geo.yEnd}
-                                        >
-                                            <stop offset="0" stopColor="#00b4d8" />
-                                            <stop offset="1" stopColor="#275DFA" />
-                                        </linearGradient>
-                                    </defs>
-                                    <path ref={trackPathRef} className="track" d={geo.d} />
-                                    <g ref={progRef}>
-                                        <path className="glow" d={geo.d} stroke="url(#journeyGrad)" />
-                                        <path className="progress" d={geo.d} stroke="url(#journeyGrad)" />
-                                    </g>
-                                    <circle className="origin" cx={geo.cx} cy={geo.y0} r="4" />
-                                    {geo.nodes.map((n, i) => (
-                                        <g
-                                            key={jobs[i].id}
-                                            className={[
-                                                'node',
-                                                i < view.reached ? 'reached' : '',
-                                                view.active === i ? 'active' : '',
-                                            ].join(' ')}
-                                            transform={`translate(${n.x} ${n.y})`}
-                                        >
-                                            <circle className="ring" r="16" />
-                                            <circle className="core" r="6" />
+                                    <svg
+                                        className="journey-svg"
+                                        width={geo.contentW}
+                                        height={geo.sceneH}
+                                        viewBox={`0 0 ${geo.contentW} ${geo.sceneH}`}
+                                        aria-hidden="true"
+                                    >
+                                        <defs>
+                                            <linearGradient
+                                                id="journeyGrad"
+                                                gradientUnits="userSpaceOnUse"
+                                                x1="0"
+                                                y1={geo.y0F}
+                                                x2="0"
+                                                y2={geo.yEndF}
+                                            >
+                                                <stop offset="0" stopColor="#00b4d8" />
+                                                <stop offset="1" stopColor="#275DFA" />
+                                            </linearGradient>
+                                        </defs>
+                                        <path ref={trackPathRef} className="track" d={geo.d} />
+                                        <g ref={progRef}>
+                                            <path className="glow" d={geo.d} stroke="url(#journeyGrad)" />
+                                            <path className="progress" d={geo.d} stroke="url(#journeyGrad)" />
                                         </g>
-                                    ))}
-                                    <g ref={markerRef} className="marker">
-                                        <circle className="halo" r="14" />
-                                        <circle className="dot" r="5" />
-                                    </g>
-                                </svg>
+                                        <circle className="origin" cx={geo.cx} cy={geo.y0F} r="5" />
+                                        {geo.nodes.map((n, i) => (
+                                            <g
+                                                key={jobs[i].id}
+                                                className={[
+                                                    'node',
+                                                    i < view.reached ? 'reached' : '',
+                                                    view.active === i ? 'active' : '',
+                                                ].join(' ')}
+                                                transform={`translate(${n.x} ${n.yF})`}
+                                            >
+                                                <circle className="ring" r="22" />
+                                                <circle className="core" r="8" />
+                                            </g>
+                                        ))}
+                                        <g ref={markerRef} className="marker">
+                                            <circle className="halo" r="22" />
+                                            <circle className="dot" r="7" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            </div>
 
-                                <div className="journey-intro" style={{ width: geo.contentW }}>
+                            <div className="journey-cards">
+                                <div className="journey-intro" ref={introRef}>
                                     <Title letterClass={letterClass} />
                                     <p className="hint">
                                         Scroll to follow the path · most recent first <span className="chev">↓</span>
@@ -330,20 +435,27 @@ const Journey = ({ letterClass }) => {
 
                                 {jobs.map((job, i) => {
                                     const n = geo.nodes[i]
-                                    const left = n.side < 0 ? n.x - GAP - geo.cardW : n.x + GAP
                                     return (
-                                        <article
+                                        <div
                                             key={job.id}
+                                            className="card-anchor"
                                             ref={(el) => { cardRefs.current[i] = el }}
-                                            className={[
-                                                'job-card',
-                                                n.side < 0 ? 'on-left' : 'on-right',
-                                                view.active === i ? 'open' : '',
-                                            ].join(' ')}
-                                            style={{ left, top: n.y, width: geo.cardW }}
                                         >
-                                            <JobCard job={job} />
-                                        </article>
+                                            <article
+                                                className={[
+                                                    'job-card',
+                                                    n.side < 0 ? 'on-left' : 'on-right',
+                                                    view.active === i ? 'open' : '',
+                                                ].join(' ')}
+                                                style={{
+                                                    left: n.side < 0 ? -(GAP + geo.cardW) : GAP,
+                                                    top: -OFFSET,
+                                                    width: geo.cardW,
+                                                }}
+                                            >
+                                                <JobCard job={job} />
+                                            </article>
+                                        </div>
                                     )
                                 })}
                             </div>
