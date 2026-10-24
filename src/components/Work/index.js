@@ -6,6 +6,7 @@ import signature from '../../assets/images/signature.png'
 import { loadCar, CAR_SIZE } from './car'
 import workData from '../../data/work.json'
 import track from '../../data/laguna.json'
+import contours from '../../data/laguna-contours.json'
 
 const jobs = workData.jobs
 
@@ -606,6 +607,17 @@ const Journey = ({ letterClass }) => {
                                         viewBox={`0 0 ${geo.worldW} ${geo.worldH}`}
                                         aria-hidden="true"
                                     >
+                                        <image
+                                            className="relief"
+                                            href={`${process.env.PUBLIC_URL}/topo/laguna-relief.webp`}
+                                            x="0"
+                                            y="0"
+                                            width={geo.worldW}
+                                            height={geo.worldH}
+                                            preserveAspectRatio="none"
+                                        />
+                                        <path className="topo-minor" d={contours.minor} />
+                                        <path className="topo-major" d={contours.major} />
                                         <path ref={trackPathRef} className="track" d={geo.d} />
                                         <g ref={progRef} />
                                         <circle className="origin" cx={geo.start.x} cy={geo.start.y} r="5" />

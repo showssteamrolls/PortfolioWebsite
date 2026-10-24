@@ -134,6 +134,25 @@ $bg: #F4F5F7;
         overflow: visible;
         pointer-events: none;
 
+        /* the terrain: soft shading plus faint contour lines */
+        .topo-minor,
+        .topo-major {
+            fill: none;
+            stroke: $blue;
+            stroke-linejoin: round;
+            stroke-linecap: round;
+        }
+
+        .topo-minor {
+            stroke-opacity: 0.13;
+            stroke-width: 2;
+        }
+
+        .topo-major {
+            stroke-opacity: 0.25;
+            stroke-width: 3.2;
+        }
+
         .track {
             fill: none;
             stroke: $blue;
@@ -264,8 +283,9 @@ $bg: #F4F5F7;
         position: absolute;
         /* a soft page-coloured backing so the line can pass behind the text */
         border-radius: 14px;
-        background: rgba($bg, 0.88);
-        box-shadow: 0 0 0 14px rgba($bg, 0.88);
+        background: rgba($bg, 0.74);
+        box-shadow: 0 0 0 14px rgba($bg, 0.74);
+        backdrop-filter: blur(5px);
         margin-top: calc(-8px * (var(--k) - 1)); /* keeps the connector on the checkpoint at any size */
         color: $ink;
 
