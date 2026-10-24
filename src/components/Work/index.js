@@ -18,6 +18,7 @@ const TILT = (TILT_DEG * Math.PI) / 180
 const SIN = Math.sin(TILT)
 const COS = Math.cos(TILT)
 const HEADING = 0.5 // how much the camera turns to follow the bends (0 = never)
+const KEY_SPEED = 650 // scroll px per second while W / S is held
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v))
 
@@ -334,6 +335,78 @@ const Journey = ({ letterClass }) => {
         kick()
     }
 
+    // Keyboard: hold W / S to move forward / back; A / D (or the left / right
+    // arrows) jump to the previous / next checkpoint. Everything goes through the
+    // scroll position, so the camera, rail and cards respond exactly as they do to
+    // the mouse wheel.
+    useEffect(() => {
+        const held = new Set()
+        let raf = 0
+        let last = 0
+        let dest = null
+        let destAt = 0
+
+        const step = (now) => {
+            const dt = Math.min(0.05, (now - last) / 1000) || 0.016
+            last = now
+            const dir = (held.has('w') ? 1 : 0) - (held.has('s') ? 1 : 0)
+            const el = scrollerRef.current
+            if (dir && el) {
+                el.scrollTop += dir * KEY_SPEED * dt
+                raf = requestAnimationFrame(step)
+            } else {
+                raf = 0
+            }
+        }
+
+        const jump = (dir) => {
+            const g = geoRef.current
+            const el = scrollerRef.current
+            if (!g || !el) return
+            const now = performance.now()
+            // pressing again mid-glide continues from where the last jump is heading
+            const base = dest !== null && now - destAt < 900 ? dest : el.scrollTop
+            const stops = [0, ...g.nodes.map((n) => n.j)]
+            const next = dir > 0
+                ? stops.find((s) => s > base + 20)
+                : [...stops].reverse().find((s) => s < base - 20)
+            if (next === undefined) return
+            dest = next
+            destAt = now
+            el.scrollTo({ top: next, behavior: reducedRef.current ? 'auto' : 'smooth' })
+        }
+
+        const onKeyDown = (e) => {
+            if (e.metaKey || e.ctrlKey || e.altKey) return
+            const t = e.target
+            if (t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.isContentEditable)) return
+            const k = e.key.toLowerCase()
+            if (k === 'w' || k === 's') {
+                held.add(k)
+                if (!raf) {
+                    last = performance.now()
+                    raf = requestAnimationFrame(step)
+                }
+            } else if (k === 'd' || k === 'arrowright') {
+                if (!e.repeat) jump(1)
+            } else if (k === 'a' || k === 'arrowleft') {
+                if (!e.repeat) jump(-1)
+            }
+        }
+        const onKeyUp = (e) => held.delete(e.key.toLowerCase())
+        const onBlur = () => held.clear()
+
+        window.addEventListener('keydown', onKeyDown)
+        window.addEventListener('keyup', onKeyUp)
+        window.addEventListener('blur', onBlur)
+        return () => {
+            window.removeEventListener('keydown', onKeyDown)
+            window.removeEventListener('keyup', onKeyUp)
+            window.removeEventListener('blur', onBlur)
+            cancelAnimationFrame(raf)
+        }
+    }, [])
+
     const goTo = (i) => {
         const g = geoRef.current
         if (!g) return
@@ -429,7 +502,7 @@ const Journey = ({ letterClass }) => {
                                 <div className="journey-intro" ref={introRef}>
                                     <Title letterClass={letterClass} />
                                     <p className="hint">
-                                        Scroll to follow the path · most recent first <span className="chev">↓</span>
+                                        Scroll or use W A S D to follow the path <span className="chev">↓</span>
                                     </p>
                                 </div>
 
