@@ -637,6 +637,7 @@ const Journey = ({ letterClass }) => {
                                     <p className="hint">
                                         (Scroll Down)
                                     </p>
+                                    <p className="track-name">Track: Laguna Seca</p>
                                     <img className="signature" src={signature} alt="Anthony's signature" />
                                 </div>
 

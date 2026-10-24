@@ -234,6 +234,16 @@ $bg: #F4F5F7;
             opacity: 0.8;
         }
 
+        .track-name {
+            margin: -8px 0 0;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: $ink;
+            opacity: 0.55;
+        }
+
         /* hangs below the hint (out of the flow), so it grows away from the path */
         .signature {
             position: absolute;
