@@ -221,18 +221,17 @@ $bg: #F4F5F7;
             opacity: 0.8;
         }
 
+        /* hangs below the hint (out of the flow), so it grows away from the path */
         .signature {
-            display: block;
-            width: 150px;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            width: 420px;
+            max-width: 100%;
             height: auto;
-            margin: 0 auto;
+            margin-top: 6px;
+            transform: translateX(-50%);
             opacity: 0.9;
-        }
-
-        .chev {
-            display: inline-block;
-            margin-left: 6px;
-            animation: workNudge 1.6s ease-in-out infinite;
         }
     }
 
@@ -564,8 +563,7 @@ $bg: #F4F5F7;
         .job-more { transition: none; }
 
         .journey-svg .marker .halo,
-        .journey-svg .node.active .ring,
-        .journey-intro .chev {
+        .journey-svg .node.active .ring {
             animation: none;
         }
     }

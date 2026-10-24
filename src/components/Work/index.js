@@ -41,7 +41,7 @@ const useMedia = (query) => {
 const buildGeometry = (w, h, n) => {
     const contentW = w - RAIL
     const cx = contentW / 2
-    const S = Math.max(520, h * 0.85)
+    const S = Math.max(420, h * 0.68)
     const A = Math.min(contentW * 0.16, 220)
     const wiggle = [1, 0.7, 1.1, 0.8, 1.05, 0.75]
     const D = S * n
@@ -503,7 +503,7 @@ const Journey = ({ letterClass }) => {
                                 <div className="journey-intro" ref={introRef}>
                                     <Title letterClass={letterClass} />
                                     <p className="hint">
-                                        Scroll Down <span className="chev">↓</span>
+                                        (Scroll Down)
                                     </p>
                                     <img className="signature" src={signature} alt="Anthony's signature" />
                                 </div>
