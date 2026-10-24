@@ -209,5 +209,10 @@
             right: 15px;
             color: #ffffff; /* MENU ICON WHITE */
         }
+
+        /* sit above the page so the menu button can be tapped; stays below the open menu (z-index 2) */
+        .hamburger-icon {
+            z-index: 1;
+        }
     }
 }
