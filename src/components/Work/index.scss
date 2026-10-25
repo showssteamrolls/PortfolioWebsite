@@ -32,7 +32,7 @@ $bg: #F4F5F7;
     background: $bg;
     opacity: 0;
     animation: workFade 1s 1s forwards;
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif;
     --k: 1.5; /* size of everything on a stop; the plain mobile list resets it to 1 */
 
     .journey-scroll {
@@ -113,7 +113,7 @@ $bg: #F4F5F7;
         z-index: 400;
         padding: 3px 9px;
         border-radius: 999px;
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-family: 'Roboto', sans-serif;
         font-size: 12px;
         font-weight: 800;
         letter-spacing: 0.14em;
