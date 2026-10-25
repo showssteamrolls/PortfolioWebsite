@@ -2,7 +2,6 @@ import './index.scss'
 import PageLoader from "../PageLoader";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import AnimatedLetters from '../AnimatedLetters'
-import signature from '../../assets/images/signature.png'
 import { loadWorld, sampleTrack, TRACK, PRE } from './scene'
 import workData from '../../data/work.json'
 
@@ -491,7 +490,6 @@ const Journey = ({ letterClass, onFail }) => {
                                         (Scroll Down)
                                     </p>
                                     <p className="track-name">Track: Laguna Seca</p>
-                                    <img className="signature" src={signature} alt="Anthony's signature" />
                                 </div>
 
                                 {jobs.map((job, i) => {

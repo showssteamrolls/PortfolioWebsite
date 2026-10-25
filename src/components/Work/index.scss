@@ -213,19 +213,6 @@ $bg: #F4F5F7;
             color: $ink;
             opacity: 0.55;
         }
-
-        /* hangs below the hint (out of the flow), so it grows away from the path */
-        .signature {
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            width: 315px;
-            max-width: 100%;
-            height: auto;
-            margin-top: 6px;
-            transform: translateX(-50%);
-            opacity: 0.9;
-        }
     }
 
     /* ---------- cards ---------- */
