@@ -33,7 +33,7 @@ const Contact = () => {
                                     <br/>
                                     Let's connect! 
                                     <br/>
-                                    <br/>I'm happy to take any inquiries, feedback, or collaboration opportunities. Take a look at my resume, or reach out on LinkedIn or by email.
+                                    <br/>Happy to take any inquiries, feedback, or collaboration opportunities!
                                     <br/>
                                     <br/>
                                     <a target = "_blank" rel = "noreferrer" href = "https://www.linkedin.com/in/anthony-tian-54a64134a/">
