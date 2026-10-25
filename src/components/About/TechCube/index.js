@@ -4,8 +4,8 @@ import './index.scss'
 // A glass dodecahedron with one tool on each of its 12 faces. It tilts toward the
 // cursor (eased, so it trails a little) and drifts slowly on its own, which also
 // covers phones, where there is no cursor. three.js loads on demand.
-const TILT_X = 3.77 // radians per unit of cursor travel: a full sweep across the page is 1.2 turns
-const TILT_Y = 3.77
+const TILT_X = 3.14 // radians per unit of cursor travel: a full sweep across the page is 1 turn
+const TILT_Y = 3.14
 const DRIFT = 0.18 // radians per second of idle spin
 const EASE = 9 // how quickly it chases the cursor
 
