@@ -323,8 +323,8 @@ export const loadWorld = async (canvas) => {
         return g
     }
     const lastStop = t.nodes[t.nodes.length - 1].len
-    const c0 = new THREE.Color('#00b4d8')
-    const c1 = new THREE.Color('#275DFA')
+    const c0 = new THREE.Color('#FFD400')
+    const c1 = new THREE.Color('#FFB800')
     const grade = (f) => {
         const u = Math.min(1, (f * t.L) / lastStop)
         return new THREE.Color().copy(c0).lerp(c1, u)
@@ -341,8 +341,8 @@ export const loadWorld = async (canvas) => {
     const warn = mk(ribbon(24), { color: new THREE.Color('#E5484D'), opacity: 0 })
     const blueC = new THREE.Color('#357DED')
     const redC = new THREE.Color('#E5484D')
-    const glow = mk(ribbon(26, grade), { vertexColors: true, opacity: 0.1 })
-    const lit = mk(ribbon(10, grade), { vertexColors: true, opacity: 0.5 })
+    const glow = mk(ribbon(26, grade), { vertexColors: true, opacity: 0.16 })
+    const lit = mk(ribbon(10, grade), { vertexColors: true, opacity: 0.85 })
     glow.geometry.setDrawRange(0, 0)
     lit.geometry.setDrawRange(0, 0)
 
