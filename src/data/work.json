@@ -1,6 +1,20 @@
 {
   "jobs": [
     {
+      "id": "next",
+      "logo": "",
+      "short": "Coming Soon",
+      "company": "Coming Soon",
+      "title": "More to Come!",
+      "subtitle": "",
+      "kind": "",
+      "location": "",
+      "dates": "",
+      "noLogo": true,
+      "caption": [],
+      "bullets": []
+    },
+    {
       "id": "klaviyo",
       "logo": "",
       "short": "Klaviyo",
@@ -88,22 +102,6 @@
       "location": "Rowland Heights, CA · On-Site",
       "dates": "Nov 2022 – Jul 2023",
       "caption": [],
-      "bullets": []
-    },
-    {
-      "id": "next",
-      "logo": "",
-      "short": "Next up",
-      "company": "Coming soon!",
-      "title": "",
-      "subtitle": "",
-      "kind": "",
-      "location": "",
-      "dates": "Next up",
-      "noLogo": true,
-      "caption": [
-        "I'm working towards more data & machine learning roles, enjoy the rest of the track."
-      ],
       "bullets": []
     }
   ]

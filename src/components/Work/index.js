@@ -105,7 +105,7 @@ const JobCard = ({ job }) => {
     const meta = [job.kind, job.location].filter(Boolean).join(' · ')
     return (
         <>
-            <span className="job-dates">{job.dates}</span>
+            {job.dates ? <span className="job-dates">{job.dates}</span> : null}
             <div className="job-head">
                 {!job.noLogo && <JobLogo job={job} />}
                 <div className="job-titles">
