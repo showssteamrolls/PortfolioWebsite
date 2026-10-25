@@ -46,6 +46,13 @@
   }
 }
 
+/* desktop: the signature sits high in its square, so nudge it down to line up with the text block */
+@media screen and (min-width: 1001px) {
+  .logo-container .solid-logo {
+    top: 21%;
+  }
+}
+
 .svg-container {
   stroke: #357DED;
   stroke-width: 10;
