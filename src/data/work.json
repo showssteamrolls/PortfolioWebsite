@@ -27,28 +27,27 @@
       "location": "Boston, MA · On-site",
       "dates": "Jan 2026 – Jun 2026",
       "caption": [
-        "(Youtube Performance Marketing Analytics Team)",
-        "Using data to navigate a complex problem space–– ads.",
-        "My favorite projects throughout my term (all-focused on direct business impact):"
+        "Using data to navigate a complex problem space–– helping people make their dream homes via Youtube Analytics.",
+        "My favorite projects throughout my term:"
       ],
       "bullets": [
         "ML Conversion Rate Predictor -> efficientized ad spend (~65k/year)",
-        "Individual Ad Performance Dashboard -> saved time/effort by centralizing insights",
-        "Audience Targeting A/B Test -> achieved 46% lower CPM, 1.6x return on ad spend"
+        "Individual Ad Performance Dashboard -> saved 8-12 hours/week of manual reporting time/effort by centralizing insights",
+        "Keyword Audience Targeting A/B Test -> achieved 46% lower CPM, 1.6x return on ad spend"
       ]
     },
     {
       "id": "yiyang",
       "logo": "",
       "short": "Yiyang",
-      "company": "Yiyang Education",
+      "company": "Yiyang International Education",
       "title": "Machine Learning Instructor",
       "subtitle": "",
       "kind": "Part-time",
       "location": "Walnut, CA · On-site",
       "dates": "May 2025 – May 2026",
       "caption": [
-        "Bringing AI & machine learning to the younger generation, by: breaking down core conceptual intuitions simply, connecting to real-world impact, and designing interactive classwork."
+        "Bringing AI & machine learning to the younger generation, by: breaking down core concepts into simple intuitions, connecting techniques to real-world impact, and interactive classwork."
       ],
       "bullets": []
     },
@@ -73,7 +72,7 @@
       "title": "Data Consultant",
       "subtitle": "",
       "kind": "Internship",
-      "location": "Boston, MA · Remote",
+      "location": "Remote",
       "dates": "Nov 2025 – Feb 2026",
       "caption": [],
       "bullets": []
