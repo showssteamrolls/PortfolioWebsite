@@ -337,7 +337,10 @@ export const loadWorld = async (canvas) => {
         scene.add(m)
         return m
     }
-    mk(ribbon(10), { color: new THREE.Color('#357DED'), opacity: 0.16 })
+    const baseLine = mk(ribbon(10), { color: new THREE.Color('#357DED'), opacity: 0.16 })
+    const warn = mk(ribbon(24), { color: new THREE.Color('#E5484D'), opacity: 0 })
+    const blueC = new THREE.Color('#357DED')
+    const redC = new THREE.Color('#E5484D')
     const glow = mk(ribbon(26, grade), { vertexColors: true, opacity: 0.1 })
     const lit = mk(ribbon(10, grade), { vertexColors: true, opacity: 0.5 })
     glow.geometry.setDrawRange(0, 0)
@@ -411,7 +414,7 @@ export const loadWorld = async (canvas) => {
         camera.updateProjectionMatrix()
     }
 
-    const frame = ({ len, camYaw, distance }) => {
+    const frame = ({ len, camYaw, distance, wrong = 0 }) => {
         const p = sampleTrack(len)
         const gy = height(p.x, p.z)
 
@@ -450,7 +453,11 @@ export const loadWorld = async (canvas) => {
         // lit part of the line behind the car
         // the trail starts afresh each time the car crosses the line
         const inLap = len < 0 && len >= -PRE ? 0 : ((len % t.L) + t.L) % t.L
-        const upto = Math.min(n - 1, Math.floor(inLap / t.step))
+        const upto = wrong > 0 ? 0 : Math.min(n - 1, Math.floor(inLap / t.step))
+        // heading the wrong way at the start: the line goes a soft red
+        baseLine.material.color.copy(blueC).lerp(redC, wrong)
+        baseLine.material.opacity = 0.16 + 0.2 * wrong
+        warn.material.opacity = 0.18 * wrong
         const cnt = upto * 6
         lit.geometry.setDrawRange(0, cnt)
         glow.geometry.setDrawRange(0, cnt)

@@ -12,6 +12,8 @@ const OFFSET = 8 // px a card sits above its checkpoint so its first line meets 
 const GAP = 46 // px between a checkpoint and its card
 const RAIL = 150 // px reserved on the right for the contents rail
 const KEY_SPEED = 650 // scroll px per second while W / S is held
+const WRONG_SPEED = 0.25 // how fast the car moves when going backwards from the start
+const WRONG_RUN = 0.3 // how far back (in stops' worth of scrolling) you can go from the start
 const CARD_W = 380
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v))
@@ -148,12 +150,13 @@ const Journey = ({ letterClass, onFail }) => {
     const canvasRef = useRef(null)
     const worldRef = useRef(null)
     const introRef = useRef(null)
+    const wrongRef = useRef(null)
     const cardRefs = useRef([])
     const dotRefs = useRef([])
     const tableRef = useRef(null)
     const geoRef = useRef(null)
     const sizeRef = useRef({ w: 0, h: 0 })
-    const anim = useRef({ target: 0, current: 0, raf: 0, last: 0, active: -2, reached: -1 })
+    const anim = useRef({ target: 0, current: 0, raf: 0, last: 0, active: -2, reached: -1, shift: 0 })
 
     const [size, setSize] = useState({ w: 0, h: 0 })
     const [view, setView] = useState({ active: -1, reached: 0 })
@@ -173,12 +176,18 @@ const Journey = ({ letterClass, onFail }) => {
         if (!g || !t || !world) return
 
         // p is the scroll position in px; the middle lap of the scroll range is lap 0
-        const jm = p - g.P
+        // Going backwards from the very start (only before the first lap) is the
+        // wrong way: the car crawls at a quarter of the speed
+        const sh = anim.current.shift
+        let jm = p - g.P + sh * g.P
+        if (sh === 0 && p < g.P) jm = (p - g.P) * WRONG_SPEED
+        const wrong = sh === 0 && jm < 0 ? clamp01(-jm / (0.05 * g.S)) : 0
+        if (wrongRef.current) wrongRef.current.classList.toggle('on', wrong > 0.2)
         const lap = Math.floor(jm / g.P)
         const jmod = jm - lap * g.P
         const len = t.toLen(jmod) + lap * TRACK.L
         const cam = sampleTrack(len).cam
-        world.frame({ len, camYaw: reducedRef.current ? 0 : cam, distance: len })
+        world.frame({ len, camYaw: reducedRef.current ? 0 : cam, distance: len, wrong })
 
         // Signs ahead fade slowly into the horizon; ones behind us fade fast.
         const fade = (ahead) => (ahead >= 0
@@ -220,7 +229,7 @@ const Journey = ({ letterClass, onFail }) => {
             g.start.x - g.startDir.x * g.titleBack,
             g.start.z - g.startDir.z * g.titleBack,
             0,
-            jm < 0 ? clamp01(1 + jm / (0.2 * g.S)) : clamp01(1 - jm / (0.4 * g.S)),
+            jm < 0 ? 1 : clamp01(1 - jm / (0.4 * g.S)),
             ' translate(-50%, -100%)'
         )
 
@@ -337,14 +346,25 @@ const Journey = ({ letterClass, onFail }) => {
         if (!g) return
         const a = anim.current
         const el = scrollerRef.current
+        const top = el.scrollTop
+        // before the first lap there is only a short wrong-way run behind the start
+        const floor = g.P - (WRONG_RUN / WRONG_SPEED) * g.S
+        if (a.shift === 0 && top < floor) {
+            el.scrollTop = floor
+            a.target = floor
+            kick()
+            return
+        }
         // endless: when the scroll position drifts toward either end, jump a whole
         // lap, which looks identical
-        const top = el.scrollTop
-        if (top < 0.1 * g.P || top > 2.9 * g.P) {
-            const shift = top < g.P ? g.P : -g.P
+        let shift = 0
+        if (a.shift > 0 && top < 0.1 * g.P) shift = g.P
+        else if (top > 2.9 * g.P) shift = -g.P
+        if (shift) {
             el.scrollTop = top + shift
             a.current += shift
             a.target = top + shift
+            a.shift -= Math.sign(shift)
         } else {
             a.target = top
         }
@@ -382,7 +402,9 @@ const Journey = ({ letterClass, onFail }) => {
             const now = performance.now()
             // pressing again mid-glide continues from where the last jump is heading
             const base = dest !== null && now - destAt < 900 ? dest : el.scrollTop
-            const stops = [0, 1, 2].flatMap((lap) => [0, ...g.nodes.map((n) => n.j)].map((j) => j + lap * g.P))
+            const stops = [0, 1, 2]
+                .flatMap((lap) => [0, ...g.nodes.map((n) => n.j)].map((j) => j + lap * g.P))
+                .filter((t) => anim.current.shift > 0 || t >= g.P)
             const next = dir > 0
                 ? stops.find((s) => s > base + 20)
                 : [...stops].reverse().find((s) => s < base - 20)
@@ -429,6 +451,7 @@ const Journey = ({ letterClass, onFail }) => {
         // the nearest copy of this checkpoint, in whichever lap that is
         const here = scrollerRef.current.scrollTop
         const top = [0, 1, 2].map((lap) => g.nodes[i].j + lap * g.P)
+            .filter((t) => anim.current.shift > 0 || t >= g.P)
             .reduce((best, t) => (Math.abs(t - here) < Math.abs(best - here) ? t : best))
         scrollerRef.current.scrollTo({
             top,
@@ -452,6 +475,14 @@ const Journey = ({ letterClass, onFail }) => {
                             <canvas ref={canvasRef} className="journey-gl" aria-hidden="true" />
 
                             <div className="journey-cards">
+                                <div
+                                    className="wrong-way"
+                                    ref={wrongRef}
+                                    style={{ left: geo.aX + 72, top: geo.aY - 10 }}
+                                >
+                                    Wrong way!
+                                </div>
+
                                 <div className="journey-intro" ref={introRef}>
                                     <Title letterClass={letterClass} />
                                     <p className="hint">
