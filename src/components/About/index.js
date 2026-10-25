@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 import Loader from "react-loaders";
 import LanguageList from "./LanguageList";
+import TechCube from "./TechCube";
 
 // icons
 import pandasLogo from "../../assets/images/pandas.svg";
@@ -12,6 +13,28 @@ import powerbiLogo from "../../assets/images/powerbi.png";
 import excelLogo from "../../assets/images/excel.png";
 import lookerLogo from "../../assets/images/looker.svg";
 import sklearnLogo from "../../assets/images/scikit.png";
+import tensorflowLogo from "../../assets/images/tensorflow.svg";
+import pytorchLogo from "../../assets/images/pytorch.svg";
+import snowflakeLogo from "../../assets/images/snowflake.svg";
+import gcpLogo from "../../assets/images/gcp.svg";
+import vscodeLogo from "../../assets/images/vscode.svg";
+import cursorLogo from "../../assets/images/cursor.svg";
+
+// one per face of the dodecahedron
+const cubeLogos = [
+    { name: "pandas", src: pandasLogo },
+    { name: "postgresql", src: postgresLogo },
+    { name: "powerbi", src: powerbiLogo },
+    { name: "excel", src: excelLogo },
+    { name: "looker", src: lookerLogo },
+    { name: "scikit-learn", src: sklearnLogo },
+    { name: "tensorflow", src: tensorflowLogo },
+    { name: "pytorch", src: pytorchLogo },
+    { name: "snowflake", src: snowflakeLogo },
+    { name: "google cloud", src: gcpLogo },
+    { name: "vs code", src: vscodeLogo },
+    { name: "cursor", src: cursorLogo },
+];
 
 const About = () => {
     
@@ -46,34 +69,8 @@ const About = () => {
                     </p>
                 </div>
 
-                <div className="stage-cube-cont">
-                    <div className="cubespinner">
-
-                        <div className="face1">
-                            <img src={pandasLogo} alt="pandas" style={{ width: "70%" }} />
-                        </div>
-
-                        <div className="face2">
-                            <img src={postgresLogo} alt="postgresql" style={{ width: "70%" }} />
-                        </div>
-
-                        <div className="face3">
-                            <img src={powerbiLogo} alt="powerbi" style={{ width: "70%" }} />
-                        </div>
-
-                        <div className="face4">
-                            <img src={excelLogo} alt="excel" style={{ width: "70%" }} />
-                        </div>
-
-                        <div className="face5">
-                            <img src={lookerLogo} alt="looker" style={{ width: "70%" }} />
-                        </div>
-
-                        <div className="face6">
-                            <img src={sklearnLogo} alt="scikit-learn" style={{ width: "70%" }} />
-                        </div>
-
-                    </div>
+                <div className="stage-cube-cont tech-stage">
+                    <TechCube logos={cubeLogos} />
                 </div>
             </div>
 

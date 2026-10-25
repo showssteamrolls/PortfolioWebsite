@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.2a379d0b.css",
-    "main.js": "/static/js/main.390dec2e.js",
+    "main.css": "/static/css/main.ec22f91d.css",
+    "main.js": "/static/js/main.9ceac08a.js",
     "static/js/760.624c8dff.chunk.js": "/static/js/760.624c8dff.chunk.js",
     "static/js/668.dd8f76ac.chunk.js": "/static/js/668.dd8f76ac.chunk.js",
     "static/js/787.a2cb61a6.chunk.js": "/static/js/787.a2cb61a6.chunk.js",
@@ -15,16 +15,22 @@
     "static/media/LaBelleAurore.woff2": "/static/media/LaBelleAurore.a83c1c58fd7e43972e4a.woff2",
     "static/media/CoolveticaRg-Regular.woff2": "/static/media/CoolveticaRg-Regular.7d1f3b1dd46ad6557a17.woff2",
     "static/media/looker.svg": "/static/media/looker.a66357f78f5d4b0da05fc7e8e911e70e.svg",
+    "static/media/snowflake.svg": "/static/media/snowflake.3b55a1de638a8a41ba6aa2df964722b1.svg",
+    "static/media/vscode.svg": "/static/media/vscode.328145aca7c08604f0bfe50985812fd0.svg",
+    "static/media/gcp.svg": "/static/media/gcp.b33046702a8a9138e786dbacc6c4d51b.svg",
     "index.html": "/index.html",
+    "static/media/tensorflow.svg": "/static/media/tensorflow.e8bfa9d7963747da36b428e752ae1b5b.svg",
+    "static/media/pytorch.svg": "/static/media/pytorch.0e34a672db3b3f2f4c58ebaab91661c7.svg",
+    "static/media/cursor.svg": "/static/media/cursor.6005da7da4d31ddb39e66a9bef0e8a21.svg",
     "static/media/pandas.svg": "/static/media/pandas.84e6b24fe6a73ba84a56c7a3ac3e0ea1.svg",
-    "main.2a379d0b.css.map": "/static/css/main.2a379d0b.css.map",
-    "main.390dec2e.js.map": "/static/js/main.390dec2e.js.map",
+    "main.ec22f91d.css.map": "/static/css/main.ec22f91d.css.map",
+    "main.9ceac08a.js.map": "/static/js/main.9ceac08a.js.map",
     "760.624c8dff.chunk.js.map": "/static/js/760.624c8dff.chunk.js.map",
     "668.dd8f76ac.chunk.js.map": "/static/js/668.dd8f76ac.chunk.js.map",
     "787.a2cb61a6.chunk.js.map": "/static/js/787.a2cb61a6.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.2a379d0b.css",
-    "static/js/main.390dec2e.js"
+    "static/css/main.ec22f91d.css",
+    "static/js/main.9ceac08a.js"
   ]
 }

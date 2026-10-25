@@ -1,0 +1,22 @@
+.stage-cube-cont.tech-stage {
+  padding-top: 0;
+  overflow: visible;
+}
+
+.tech-cube {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  filter: drop-shadow(0 0 16px rgba(39, 93, 250, 0.4));
+}
+
+@media screen and (max-width: 1000px) {
+  .stage-cube-cont.tech-stage {
+    position: relative;
+    top: auto;
+    width: 100%;
+    height: 260px;
+    margin-top: 10px;
+  }
+}
