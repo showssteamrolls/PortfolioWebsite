@@ -1,15 +1,13 @@
 import "./index.scss"
 import PageLoader from "../PageLoader";
 import AnimatedLetters from "../AnimatedLetters" 
-import { useEffect, useRef, useState } from "react"
-import emailjs from "@emailjs/browser"
+import { useEffect, useState } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faLinkedin } from "@fortawesome/free-brands-svg-icons"
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons"
 
 const Contact = () => {
     const [letterClass, setLetterClass] = useState('text-animate')
-    const refForm = useRef()
 
     useEffect(() => {
         const timerId = setTimeout(() => {
@@ -20,37 +18,6 @@ const Contact = () => {
           clearTimeout(timerId);
         };
       }, []);
-
-      const sendEmail = (e) => {
-        e.preventDefault() 
-
-        const { REACT_APP_EMAILJS_SERVICE_ID: svc, REACT_APP_EMAILJS_TEMPLATE_ID: tpl, REACT_APP_EMAILJS_USER_ID: key } = process.env
-
-        // EmailJS isn't configured (no keys set on this deployment): open the visitor's mail app instead of failing silently.
-        if (!svc || !tpl || !key) {
-            const f = new FormData(refForm.current)
-            const body = `${f.get("message")}\n\n- ${f.get("name")} (${f.get("email")})`
-            window.location.href = `mailto:tian.ruy@northeastern.edu?subject=${encodeURIComponent(f.get("subject") || "")}&body=${encodeURIComponent(body)}`
-            return
-        }
-
-        emailjs
-            .sendForm(
-                svc,
-                tpl,
-                refForm.current,
-                key
-            )
-            .then(
-                () => {
-                    alert("Message successfully sent! I will get back to you within 1 to 2 business days.")
-                    window.location.reload(false)
-                }, 
-                () => { 
-                    alert("Failed to send the message, please try again")
-                }
-            )
-      }
 
     return(
         <>
@@ -66,7 +33,7 @@ const Contact = () => {
                                     <br/>
                                     Let's connect! 
                                     <br/>
-                                    <br/>I'm happy to take any inquiries, feedback, or collaboration opportunities. Feel free to contact me via this form.
+                                    <br/>I'm happy to take any inquiries, feedback, or collaboration opportunities. Take a look at my resume, or reach out on LinkedIn or by email.
                                     <br/>
                                     <br/>
                                     <a target = "_blank" rel = "noreferrer" href = "https://www.linkedin.com/in/anthony-tian-54a64134a/">
@@ -78,27 +45,10 @@ const Contact = () => {
                                 </p>
                             </td>
                             <td className="right-side">
-                                <div className="contact-form" onSubmit={sendEmail}>
-                                    <form ref={refForm}>
-                                        <ul>
-                                            <li className = "half">
-                                                <input type="text" name="name" placeholder="Name" required />
-                                            </li>
-                                            <li className="half">
-                                                <input type="email" name="email" placeholder = "Email" required />
-                                            </li>
-                                            <li>
-                                                <input placeholder = "Subject" type="text" name="subject" required/>
-                                            </li>
-                                            <li>
-                                                <textarea placeholder="Message" name="message" required></textarea>
-                                            </li>
-                                            <li>
-                                                <input type="submit" className="flat-button" value="SEND" />
-                                            </li>
-                                        </ul>
-                                    </form>
-                                </div>
+                                <a className="resume-card" href="/Anthony_Tian_Resume.pdf" target="_blank" rel="noreferrer" aria-label="Open resume PDF">
+                                    <img src="/resume-preview.png" alt="Anthony Tian resume" />
+                                </a>
+                                <a className="flat-button resume-button" href="/Anthony_Tian_Resume.pdf" download="Anthony_Tian_Resume.pdf">DOWNLOAD RESUME</a>
                             </td>
                         </tr>
                     </table>
