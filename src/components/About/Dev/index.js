@@ -34,7 +34,7 @@ const About = () => {
                         />
                     </h1>
                     <p>
-                        Ambitious data scientist & team player who solves problems creatively with statistics & data, to create direct business value. 
+                        Ambitious data scientist & team player who solves problems creatively.
                         <br/>
                         <DevList />
                         <Link to="/about" className="flat-button">LANGUAGES</Link>
