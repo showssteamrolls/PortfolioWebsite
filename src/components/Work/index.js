@@ -107,18 +107,20 @@ const JobCard = ({ job }) => {
         <>
             <span className="job-dates">{job.dates}</span>
             <div className="job-head">
-                <JobLogo job={job} />
+                {!job.noLogo && <JobLogo job={job} />}
                 <div className="job-titles">
                     <h2 className="job-company">{job.company}</h2>
-                    <p className="job-role">
-                        <span className="role-line">{job.title}</span>
-                        {job.subtitle ? <span className="role-line">{job.subtitle}</span> : null}
-                    </p>
+                    {job.title ? (
+                        <p className="job-role">
+                            <span className="role-line">{job.title}</span>
+                            {job.subtitle ? <span className="role-line">{job.subtitle}</span> : null}
+                        </p>
+                    ) : null}
                 </div>
             </div>
             <div className="job-more">
                 <div className="job-more-inner">
-                    <p className="job-meta">{meta}</p>
+                    {meta ? <p className="job-meta">{meta}</p> : null}
                     {job.caption.map((line, i) => (
                         <p className="job-line" key={i}>{line}</p>
                     ))}

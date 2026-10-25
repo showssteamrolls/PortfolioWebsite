@@ -89,6 +89,22 @@
       "dates": "Nov 2022 – Jul 2023",
       "caption": [],
       "bullets": []
+    },
+    {
+      "id": "next",
+      "logo": "",
+      "short": "Next up",
+      "company": "Coming soon!",
+      "title": "",
+      "subtitle": "",
+      "kind": "",
+      "location": "",
+      "dates": "Next up",
+      "noLogo": true,
+      "caption": [
+        "I'm working towards more data & machine learning roles, enjoy the rest of the track"
+      ],
+      "bullets": []
     }
   ]
 }
