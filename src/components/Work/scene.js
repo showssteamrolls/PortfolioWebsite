@@ -11,6 +11,7 @@ const HS = 680 // world px of height for the full terrain range
 const CELL = 14 // world px between heightfield samples
 export const PRE = 130 // run-up before the start line, and run-out past the finish
 export const R = 600 // camera distance from the car (also sets the field of view)
+const ZOOM = 1.4 // magnifies the world (car, track) without changing the size of the cards
 const EL = (33 * Math.PI) / 180 // camera elevation above the ground
 const STEP = 4 // px between samples along the line
 const BG = [244 / 255, 245 / 255, 247 / 255]
@@ -409,7 +410,7 @@ export const loadWorld = async (canvas) => {
         size.h = h
         renderer.setSize(w, h)
         camera.aspect = w / h
-        camera.fov = (2 * Math.atan(h / 2 / R) * 180) / Math.PI
+        camera.fov = (2 * Math.atan(h / 2 / (R * ZOOM)) * 180) / Math.PI
         camera.setViewOffset(w, h, w / 2 - aX, h / 2 - aY, w, h)
         camera.updateProjectionMatrix()
     }
