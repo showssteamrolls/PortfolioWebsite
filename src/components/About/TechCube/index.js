@@ -4,10 +4,10 @@ import './index.scss'
 // A glass dodecahedron with one tool on each of its 12 faces. It tilts toward the
 // cursor (eased, so it trails a little) and drifts slowly on its own, which also
 // covers phones, where there is no cursor. three.js loads on demand.
-const TILT_X = 0.55 // radians of tilt for a cursor at the very top or bottom of the page
-const TILT_Y = 0.9 // ...and at the left or right edge
+const TILT_X = 3.77 // radians per unit of cursor travel: a full sweep across the page is 1.2 turns
+const TILT_Y = 3.77
 const DRIFT = 0.18 // radians per second of idle spin
-const EASE = 5 // how quickly it chases the cursor
+const EASE = 9 // how quickly it chases the cursor
 
 const drawLogo = (src, THREE) => new Promise((resolve) => {
     const img = new Image()
