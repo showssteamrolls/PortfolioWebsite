@@ -1,6 +1,6 @@
 import './index.scss'
+import PageLoader from "../PageLoader";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import Loader from 'react-loaders'
 import AnimatedLetters from '../AnimatedLetters'
 import signature from '../../assets/images/signature.png'
 import { loadWorld, sampleTrack, TRACK, PRE } from './scene'
@@ -564,7 +564,7 @@ const Work = () => {
                     ? <FlatList letterClass={letterClass} />
                     : <Journey letterClass={letterClass} onFail={() => setFailed(true)} />}
             </div>
-            <Loader type="pacman" />
+            <PageLoader />
         </>
     )
 }

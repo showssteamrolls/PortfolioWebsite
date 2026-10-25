@@ -1,8 +1,8 @@
 import "./index.scss"; 
+import PageLoader from "../PageLoader";
 import AnimatedLetters from "../AnimatedLetters"
 import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
-import Loader from "react-loaders";
 import LanguageList from "./LanguageList";
 import TechCube from "./TechCube";
 
@@ -47,7 +47,7 @@ const About = () => {
                 </div>
             </div>
 
-            <Loader type="pacman" />
+            <PageLoader />
         </>
     )
 }

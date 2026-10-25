@@ -1,0 +1,57 @@
+.page-loader {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 60px; /* leaves the sidebar showing */
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F4F5F7;
+  pointer-events: none;
+  animation: pageLoaderOut 0.55s ease 1.2s forwards;
+
+  .page-loader-mark {
+    width: 140px;
+    height: 140px;
+    overflow: visible;
+  }
+
+  .outline {
+    fill: #fff;
+    stroke: #d9e0f0;
+    stroke-width: 0.8;
+  }
+
+  .fill {
+    fill: #275DFA;
+    transform: translateY(100px);
+    animation: pageLoaderFill 1.05s cubic-bezier(0.65, 0, 0.35, 1) 0.1s forwards;
+  }
+}
+
+@keyframes pageLoaderFill {
+  to { transform: translateY(0); }
+}
+
+@keyframes pageLoaderOut {
+  to { opacity: 0; visibility: hidden; }
+}
+
+@media screen and (max-width: 1000px) {
+  .page-loader {
+    left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-loader {
+    animation-delay: 0.3s;
+
+    .fill {
+      animation: none;
+      transform: none;
+    }
+  }
+}

@@ -1,8 +1,8 @@
 import "./index.scss"; 
+import PageLoader from "../../PageLoader";
 import AnimatedLetters from "../../AnimatedLetters"
 import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
-import Loader from "react-loaders";
 import TechList from "../TechList";
 import TechCube from "../TechCube";
 import { cubeLogos } from "../TechCube/logos";
@@ -41,7 +41,7 @@ const About = () => {
                     <TechCube logos={cubeLogos} />
                 </div>
             </div>
-            <Loader type="pacman" />
+            <PageLoader />
         </>
     )
 }

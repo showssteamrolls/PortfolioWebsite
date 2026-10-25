@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Loader from 'react-loaders';
+import PageLoader from "../PageLoader";
 import { Link } from 'react-router-dom';
 import AnimatedLetters from '../AnimatedLetters';
 import './index.scss';
@@ -66,7 +66,7 @@ const Home = () => {
                 <Logo className="Home" />
             </div>
 
-            <Loader type="line-scale" />
+            <PageLoader />
         </>
     );
 };

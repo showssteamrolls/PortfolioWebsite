@@ -1,5 +1,5 @@
-import Loader from "react-loaders"
 import "./index.scss"
+import PageLoader from "../PageLoader";
 import AnimatedLetters from "../AnimatedLetters" 
 import { useEffect, useRef, useState } from "react"
 import emailjs from "@emailjs/browser"
@@ -94,7 +94,7 @@ const Contact = () => {
                     </table>
                 </div>
             </div>
-            <Loader type="line-scale" />
+            <PageLoader />
         </>
     )
 }
