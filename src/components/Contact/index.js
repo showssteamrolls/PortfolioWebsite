@@ -24,12 +24,22 @@ const Contact = () => {
       const sendEmail = (e) => {
         e.preventDefault() 
 
+        const { REACT_APP_EMAILJS_SERVICE_ID: svc, REACT_APP_EMAILJS_TEMPLATE_ID: tpl, REACT_APP_EMAILJS_USER_ID: key } = process.env
+
+        // EmailJS isn't configured (no keys set on this deployment): open the visitor's mail app instead of failing silently.
+        if (!svc || !tpl || !key) {
+            const f = new FormData(refForm.current)
+            const body = `${f.get("message")}\n\n- ${f.get("name")} (${f.get("email")})`
+            window.location.href = `mailto:tian.ruy@northeastern.edu?subject=${encodeURIComponent(f.get("subject") || "")}&body=${encodeURIComponent(body)}`
+            return
+        }
+
         emailjs
             .sendForm(
-                process.env.REACT_APP_EMAILJS_SERVICE_ID,
-                process.env.REACT_APP_EMAILJS_TEMPLATE_ID,
+                svc,
+                tpl,
                 refForm.current,
-                process.env.REACT_APP_EMAILJS_USER_ID
+                key
             )
             .then(
                 () => {
