@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ProgressBar from "../ProgressBar";
+import ProgressBar, { PALETTE } from "../ProgressBar";
 import "./index.scss"
 
 const TechList = () => {
@@ -17,7 +17,7 @@ const TechList = () => {
         {techs.map((tech, index) => (
           <li key={index}>
             <span>{tech.name}: {`${tech.years} years`}</span>
-            <ProgressBar progress={tech.progress} className={tech.className} />
+            <ProgressBar progress={tech.progress} className={tech.className} color={PALETTE[index % PALETTE.length]} />
           </li>
         ))}
       </ul>

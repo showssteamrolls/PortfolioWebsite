@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ProgressBar from "../ProgressBar";
+import ProgressBar, { PALETTE } from "../ProgressBar";
 import "./index.scss"
 
 const LanguageList = () => {
@@ -16,7 +16,7 @@ const LanguageList = () => {
         {languages.map((language, index) => (
           <li key={index}>
             <span>{language.name}: {`${language.years} years`}</span>
-            <ProgressBar progress={language.progress} className={language.className} />
+            <ProgressBar progress={language.progress} className={language.className} color={PALETTE[index % PALETTE.length]} />
           </li>
         ))}
       </ul>
