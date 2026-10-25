@@ -337,9 +337,9 @@ export const loadWorld = async (canvas) => {
         scene.add(m)
         return m
     }
-    mk(ribbon(10), { color: new THREE.Color('#357DED'), opacity: 0.26 })
-    const glow = mk(ribbon(26, grade), { vertexColors: true, opacity: 0.16 })
-    const lit = mk(ribbon(10, grade), { vertexColors: true, opacity: 1 })
+    mk(ribbon(10), { color: new THREE.Color('#357DED'), opacity: 0.16 })
+    const glow = mk(ribbon(26, grade), { vertexColors: true, opacity: 0.1 })
+    const lit = mk(ribbon(10, grade), { vertexColors: true, opacity: 0.5 })
     glow.geometry.setDrawRange(0, 0)
     lit.geometry.setDrawRange(0, 0)
 
