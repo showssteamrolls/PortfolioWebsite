@@ -71,7 +71,10 @@
 @media screen and (max-width: 1200px) {
     .home-page {
         .logo-container {
-            width: 400px;
+            width: 500px;
+            height: 500px;
+            left: auto;
+            right: 30px;
         }
     }
 }
