@@ -494,15 +494,15 @@ const Journey = ({ letterClass, onFail }) => {
                         <div className="journey-stage" style={{ height: size.h }}>
                             <canvas ref={canvasRef} className="journey-gl" aria-hidden="true" />
 
-                            <div className="journey-cards">
-                                <div className="speaker" ref={wrongRef}>
-                                    <Avatar />
-                                    <div className={`bubble${said ? '' : ' idle'}`} key={view.active}>
-                                        <span className="say">{said}</span>
-                                        <span className="oops">Wrong way!</span>
-                                    </div>
+                            <div className="speaker" ref={wrongRef}>
+                                <Avatar />
+                                <div className={`bubble${said ? '' : ' idle'}`} key={view.active}>
+                                    <span className="say">{said}</span>
+                                    <span className="oops">Wrong way!</span>
                                 </div>
+                            </div>
 
+                            <div className="journey-cards">
                                 <div className="journey-intro" ref={introRef}>
                                     <Title letterClass={letterClass} />
                                     <p className="hint">
