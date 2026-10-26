@@ -339,9 +339,9 @@ export const loadWorld = async (canvas) => {
         return m
     }
     const baseLine = mk(ribbon(10), { color: new THREE.Color('#357DED'), opacity: 0.16 })
-    const warn = mk(ribbon(24), { color: new THREE.Color('#E5484D'), opacity: 0 })
+    const warn = mk(ribbon(24), { color: new THREE.Color('#FFC400'), opacity: 0 })
     const blueC = new THREE.Color('#357DED')
-    const redC = new THREE.Color('#E5484D')
+    const redC = new THREE.Color('#FFC400')
     const glow = mk(ribbon(26, grade), { vertexColors: true, opacity: 0.16 })
     const lit = mk(ribbon(10, grade), { vertexColors: true, opacity: 0.85 })
     glow.geometry.setDrawRange(0, 0)

@@ -498,7 +498,7 @@ const Journey = ({ letterClass, onFail }) => {
                                 <Avatar />
                                 <div className={`bubble${said ? '' : ' idle'}`} key={view.active}>
                                     <span className="say">{said}</span>
-                                    <span className="oops">Wrong way!</span>
+                                    <span className="oops">Psst... we're driving backwards right now.</span>
                                 </div>
                             </div>
 

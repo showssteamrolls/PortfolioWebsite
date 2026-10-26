@@ -179,23 +179,19 @@ $bg: #F4F5F7;
 
             .oops {
                 display: none;
-                font-weight: 800;
-                letter-spacing: 0.14em;
-                text-transform: uppercase;
-                font-size: 13px;
             }
         }
 
         &:not(.wrong) .bubble.idle { display: none; }
 
         &.wrong {
-            .avatar { border-color: #E5484D; }
+            .avatar { border-color: #FFB800; }
             .bubble {
-                background: rgba(255, 240, 240, 0.95);
-                border-color: #E5484D;
-                color: #E5484D;
+                background: rgba(255, 249, 224, 0.97);
+                border-color: #FFB800;
+                color: #8A5A00;
 
-                &::before { border-color: #E5484D; }
+                &::before { border-color: #FFB800; }
                 .say { display: none; }
                 .oops { display: inline; }
             }
