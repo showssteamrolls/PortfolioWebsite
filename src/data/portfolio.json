@@ -1,21 +1,21 @@
 {
     "portfolio": [
         {
-            "cover": "/portfolio/restaurant-reviews-dashboard.png", 
-            "title": "Restaurant Reviews Analysis Dashboard", 
+            "cover": "/portfolio/restaurant-reviews-dashboard.png",
+            "title": "Restaurant Reviews Analysis Dashboard",
             "description": "Python, XGBoost, Scikit-learn, Cross-Validation, Permutation Importance, NLP, JS, SerpAPI",
             "url": "https://boston-shawarma-reviews-dashboard.vercel.app/"
         },
         {
-            "cover": "/portfolio/boxing-app-webpage.png", 
-            "title": "Live Boxing Form Grader", 
+            "cover": "/portfolio/boxing-app-webpage.png",
+            "title": "Live Boxing Form Grader",
             "description": "Python, MediaPipe, OpenCV, Visual Data Processing, Motion Tracking, Real-Time Analytics",
             "url": "https://boxing-form-grader.vercel.app/"
         },
         {
             "cover": "/portfolio/equity-portfolio.png",
             "title": "Client-Tailored Retirement Portfolio",
-            "description": "1-on-1 Consulting, Python, Fundamental Analysis, Risk Modeling, Next.js",
-            "url": "https://anthtonyt-equity-portolio-sample.vercel.app/"
-        }]
-    }
+            "description": "1-on-1 Consulting, Python, Fundamental Analysis, Risk Modeling, Next.js"
+        }
+    ]
+}
