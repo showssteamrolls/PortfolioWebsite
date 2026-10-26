@@ -495,9 +495,9 @@ const Journey = ({ letterClass, onFail }) => {
                             <div className="journey-cards">
                                 <div className="speaker" ref={wrongRef}>
                                     <Avatar />
-                                    <div className="bubble" key={view.active}>
+                                    <div className={`bubble${view.active < 0 ? ' idle' : ''}`} key={view.active}>
                                         <span className="say">
-                                            {view.active >= 0 ? jobs[view.active].speech : "Hi, I'm Anthony! Scroll to ride through my experience."}
+                                            {view.active >= 0 ? jobs[view.active].speech : ''}
                                         </span>
                                         <span className="oops">Wrong way!</span>
                                     </div>
