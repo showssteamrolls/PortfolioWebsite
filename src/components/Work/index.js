@@ -178,6 +178,8 @@ const Journey = ({ letterClass, onFail }) => {
 
     const [size, setSize] = useState({ w: 0, h: 0 })
     const [view, setView] = useState({ active: -1, reached: 0 })
+    // what the profile bubble says: the intro before the first stop, then each stop's own line (blank = stays quiet)
+    const said = view.active >= 0 ? jobs[view.active].speech : view.reached === 0 ? "Hey! Here's a summary of my work experience." : ''
 
     const geo = useMemo(
         () => (size.w ? buildGeometry(size.w, size.h, jobs.length) : null),
@@ -495,10 +497,8 @@ const Journey = ({ letterClass, onFail }) => {
                             <div className="journey-cards">
                                 <div className="speaker" ref={wrongRef}>
                                     <Avatar />
-                                    <div className={`bubble${view.active < 0 ? ' idle' : ''}`} key={view.active}>
-                                        <span className="say">
-                                            {view.active >= 0 ? jobs[view.active].speech : ''}
-                                        </span>
+                                    <div className={`bubble${said ? '' : ' idle'}`} key={view.active}>
+                                        <span className="say">{said}</span>
                                         <span className="oops">Wrong way!</span>
                                     </div>
                                 </div>

@@ -13,7 +13,7 @@
       "noLogo": true,
       "caption": [],
       "bullets": [],
-      "speech": "More to come: I'm aiming for data analyst, data science and machine learning roles!"
+      "speech": ""
     },
     {
       "id": "klaviyo",
@@ -30,7 +30,7 @@
         "(People Operations Team)"
       ],
       "bullets": [],
-      "speech": "Next up: I'm joining Klaviyo's People Analytics team as a Data Analyst Co-op in January 2027."
+      "speech": "I'll be joining Klaviyo in January–– very excited."
     },
     {
       "id": "wayfair",
@@ -51,7 +51,7 @@
         "Individual Ad Performance Dashboard -> saved 8-12 hours/week of manual reporting time/effort by centralizing insights",
         "Keyword Audience Targeting A/B Test -> achieved 46% lower CPM, 1.6x return on ad spend"
       ],
-      "speech": "At Wayfair I built a conversion-rate model that saves about $65k a year, and an A/B test that cut CPM 46%."
+      "speech": "Very fond memories of my first co-op at Wayfair."
     },
     {
       "id": "yiyang",
@@ -67,7 +67,7 @@
         "Bringing AI & machine learning to the younger generation, by: breaking down core concepts into simple intuitions, connecting techniques to real-world impact, and interactive classwork."
       ],
       "bullets": [],
-      "speech": "I teach machine learning to 4th-6th graders, turning algorithms into things they recognize, like GPS ETAs and facial recognition."
+      "speech": "When I discovered ML in college, I wish I learned it earlier–– wanted to introduce ML & AI in a grounded way."
     },
     {
       "id": "northeastern-ta",
@@ -81,7 +81,7 @@
       "dates": "Jan 2025 – Jun 2026",
       "caption": [],
       "bullets": [],
-      "speech": "As a grad TA for Ecological Economics, I held 14 office hours a semester and coached students through data sourcing and visualization."
+      "speech": ""
     },
     {
       "id": "techsalerator",
@@ -95,7 +95,7 @@
       "dates": "Nov 2025 – Feb 2026",
       "caption": [],
       "bullets": [],
-      "speech": "I worked as a remote data consultant at Techsalerator from November 2025 to February 2026."
+      "speech": ""
     },
     {
       "id": "ocdl",
@@ -109,7 +109,7 @@
       "dates": "Nov 2022 – Jul 2023",
       "caption": [],
       "bullets": [],
-      "speech": "I started out coaching young debaters as an assistant instructor with the Orange County Debate League."
+      "speech": ""
     }
   ]
 }
