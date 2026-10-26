@@ -100,6 +100,23 @@ const JobLogo = ({ job }) => {
     )
 }
 
+// Round profile picture. Drop a photo at public/avatar.jpg and it replaces the placeholder.
+const Avatar = () => {
+    const [missing, setMissing] = useState(false)
+    return (
+        <div className="avatar" aria-hidden="true">
+            {missing ? (
+                <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="38" r="18" />
+                    <path d="M14 100 C14 70 32 60 50 60 C68 60 86 70 86 100 Z" />
+                </svg>
+            ) : (
+                <img src={`${process.env.PUBLIC_URL}/avatar.jpg`} alt="" onError={() => setMissing(true)} />
+            )}
+        </div>
+    )
+}
+
 const JobCard = ({ job }) => {
     const meta = [job.kind, job.location].filter(Boolean).join(' · ')
     return (
@@ -183,7 +200,7 @@ const Journey = ({ letterClass, onFail }) => {
         let jm = p - g.P + sh * g.P
         if (sh === 0 && p < g.P) jm = (p - g.P) * WRONG_SPEED
         const wrong = sh === 0 && jm < 0 ? clamp01(-jm / (0.05 * g.S)) : 0
-        if (wrongRef.current) wrongRef.current.classList.toggle('on', wrong > 0.2)
+        if (wrongRef.current) wrongRef.current.classList.toggle('wrong', wrong > 0.2)
         const lap = Math.floor(jm / g.P)
         const jmod = jm - lap * g.P
         const len = t.toLen(jmod) + lap * TRACK.L
@@ -476,12 +493,14 @@ const Journey = ({ letterClass, onFail }) => {
                             <canvas ref={canvasRef} className="journey-gl" aria-hidden="true" />
 
                             <div className="journey-cards">
-                                <div
-                                    className="wrong-way"
-                                    ref={wrongRef}
-                                    style={{ left: geo.aX + 72, top: geo.aY - 10 }}
-                                >
-                                    Wrong way!
+                                <div className="speaker" ref={wrongRef}>
+                                    <Avatar />
+                                    <div className="bubble" key={view.active}>
+                                        <span className="say">
+                                            {view.active >= 0 ? jobs[view.active].speech : "Hi, I'm Anthony! Scroll to ride through my experience."}
+                                        </span>
+                                        <span className="oops">Wrong way!</span>
+                                    </div>
                                 </div>
 
                                 <div className="journey-intro" ref={introRef}>
