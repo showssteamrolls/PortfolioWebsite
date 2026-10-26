@@ -3,8 +3,23 @@ import PageLoader from "../PageLoader";
 import "./index.scss";
 import AnimatedLetters from "../AnimatedLetters";
 import portfolioData from "../../data/portfolio.json";
+import PortfolioRing from "./PortfolioRing";
+
+// the ring needs a mouse and some width; phones and tablets keep the plain grid
+const useRingMode = () => {
+    const query = '(min-width: 1001px) and (hover: hover)'
+    const [on, setOn] = useState(() => window.matchMedia(query).matches)
+    useEffect(() => {
+        const mq = window.matchMedia(query)
+        const f = () => setOn(mq.matches)
+        mq.addEventListener('change', f)
+        return () => mq.removeEventListener('change', f)
+    }, [])
+    return on
+}
 
 const Portfolio = () => {
+    const ringMode = useRingMode()
     const [letterClass, setLetterClass] = useState('text-animate');
     console.log(portfolioData);
 
@@ -26,11 +41,13 @@ const Portfolio = () => {
                         return (
                             <div key={idx} className="image-box">
                                 <img src={port.cover} alt="portfolio" className = "portfolio-image"/>
-                                <div className="content">
+                                {(port.title || port.description) ? (
+<div className="content">
                                     <p className="title">{port.title}</p>
                                     <h4 className="description">{port.description}</h4>
                                     {port.url ? <button className="btn" onClick={() => window.open(port.url)}>View</button> : null}
                                 </div>
+                                ) : null}
                             </div>
                         )
                     })
@@ -44,7 +61,7 @@ const Portfolio = () => {
                 <h1 className = "page-title">
                     <AnimatedLetters letterClass = {letterClass} strArray={"Portfolio".split("")} idx={15}/>
                 </h1>
-                <div>{renderPortfolio(portfolioData.portfolio)}</div>
+                <div>{ringMode ? <PortfolioRing items={portfolioData.portfolio} /> : renderPortfolio(portfolioData.portfolio)}</div>
             </div>
             <PageLoader />
         </>
