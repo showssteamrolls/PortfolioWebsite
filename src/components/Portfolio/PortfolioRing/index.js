@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import './index.scss'
 
 const DEAD = 0.14 // cursor this close to the middle of the page leaves the ring still (it settles on a card)
-const VMAX = 1.7 // fastest spin, radians per second
+const VMAX = 5.1 // fastest spin, radians per second
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v))
 
 // The projects sit on a small tilted ring. The cursor's position steers the spin
@@ -18,8 +18,8 @@ const PortfolioRing = ({ items }) => {
         const el = stageRef.current
         const measure = () => {
             const w = el.clientWidth
-            const c = clamp(w * 0.27, 190, 270)
-            const next = { rx: clamp(w * 0.33, 170, 380), ry: clamp(c * 0.36, 60, 100), c }
+            const c = clamp(w * 0.5, 300, 500)
+            const next = { rx: clamp(w * 0.28, 150, 330), ry: clamp(c * 0.3, 90, 150), c }
             dimsRef.current = next
             setDims(next)
         }
@@ -65,15 +65,17 @@ const PortfolioRing = ({ items }) => {
                 const th = s.angle + i * step
                 const cos = Math.cos(th)
                 const d = (cos + 1) / 2 // 1 at the front, 0 at the back
-                const sc = 0.5 + 0.5 * d
+                const sc = 0.27 + 0.73 * d
                 el.style.transform =
                     `translate3d(${(rx * Math.sin(th)).toFixed(1)}px, ${(ry * cos).toFixed(1)}px, 0) scale(${sc.toFixed(3)})`
                 el.style.zIndex = String(Math.round(d * 100))
-                el.style.opacity = (0.5 + 0.5 * d).toFixed(3)
+                el.style.opacity = (0.42 + 0.58 * d).toFixed(3)
                 el.style.setProperty('--text', clamp((d - 0.35) / 0.4, 0, 1).toFixed(3))
+                el.style.setProperty('--c', `${c}px`)
                 el.style.width = `${c}px`
                 el.style.height = `${c}px`
                 el.style.marginLeft = `${-c / 2}px`
+                el.style.top = `${ry + c * 0.14}px`
                 el.style.marginTop = `${-c / 2}px`
             }
             s.raf = requestAnimationFrame(tick)
@@ -89,9 +91,9 @@ const PortfolioRing = ({ items }) => {
 
     return (
         <div className="ring-wrap">
-            <div className="ring-stage" ref={stageRef} style={{ height: dims.c + dims.ry * 2 + 40 }}>
-                <div className="ring-path wide" style={{ width: dims.rx * 2, height: dims.ry * 2 }} />
-                <div className="ring-path thin" style={{ width: dims.rx * 2, height: dims.ry * 2 }} />
+            <div className="ring-stage" ref={stageRef} style={{ height: dims.ry * 2 + dims.c * 0.64 + 24 }}>
+                <div className="ring-path wide" style={{ width: dims.rx * 2, height: dims.ry * 2, top: dims.ry + dims.c * 0.14 }} />
+                <div className="ring-path thin" style={{ width: dims.rx * 2, height: dims.ry * 2, top: dims.ry + dims.c * 0.14 }} />
                 {items.map((port, i) => {
                     const Tag = port.url ? 'a' : 'div'
                     const link = port.url ? { href: port.url, target: '_blank', rel: 'noreferrer' } : {}
@@ -114,7 +116,6 @@ const PortfolioRing = ({ items }) => {
                     )
                 })}
             </div>
-            <p className="ring-hint">Move your cursor to spin · click a project to open it</p>
         </div>
     )
 }
