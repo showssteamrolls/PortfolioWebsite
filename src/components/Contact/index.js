@@ -45,10 +45,10 @@ const Contact = () => {
                                 </p>
                             </td>
                             <td className="right-side">
-                                <a className="resume-card" href="/Anthony_Tian_Resume.pdf" target="_blank" rel="noreferrer" aria-label="Open resume PDF">
-                                    <img src="/resume-preview.png" alt="Anthony Tian resume" />
+                                <a className="resume-card" href="/Anthony_Tian_Resume.pdf?v=2" target="_blank" rel="noreferrer" aria-label="Open resume PDF">
+                                    <img src="/resume-preview.png?v=2" alt="Anthony Tian resume" />
                                 </a>
-                                <a className="flat-button resume-button" href="/Anthony_Tian_Resume.pdf" download="Anthony_Tian_Resume.pdf">DOWNLOAD RESUME</a>
+                                <a className="flat-button resume-button" href="/Anthony_Tian_Resume.pdf?v=2" download="Anthony_Tian_Resume.pdf">DOWNLOAD RESUME</a>
                             </td>
                         </tr>
                     </table>
