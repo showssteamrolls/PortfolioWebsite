@@ -1,0 +1,104 @@
+.container.portfolio-page .mc-section {
+    margin: 10px 0 120px 50px;
+    max-width: 1100px;
+
+    .construction-line {
+        height: 16px;
+        border-radius: 3px;
+        background: repeating-linear-gradient(-45deg, #FFD400 0, #FFD400 16px, #111 16px, #111 32px);
+        opacity: 0;
+        animation: mcIn 0.8s 1.6s forwards;
+    }
+
+    .mc-title {
+        margin: 26px 0 0;
+        font-family: 'Poppins', sans-serif;
+        font-size: 28px;
+        font-weight: 500;
+        max-width: none;
+        color: #357DED;
+        opacity: 0;
+        animation: mcIn 0.8s 1.7s forwards;
+    }
+
+    .mc-sub {
+        margin: 6px 0 22px;
+        max-width: none !important;
+        font-family: 'Roboto', sans-serif;
+        font-size: 13px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: #476ea0;
+        opacity: 0;
+        animation: mcIn 0.8s 1.8s forwards;
+    }
+
+    .mc-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-auto-rows: 150px;
+        grid-auto-flow: dense;
+        gap: 12px;
+        opacity: 0;
+        animation: mcIn 0.8s 1.9s forwards;
+    }
+
+    .mc-tile {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+        background: #e7ecf6;
+
+        img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        &:hover img {
+            transform: scale(1.05);
+        }
+
+        &.empty {
+            background: linear-gradient(135deg, rgba(53, 125, 237, 0.10), rgba(53, 125, 237, 0.04));
+            border: 2px dashed rgba(53, 125, 237, 0.25);
+            box-sizing: border-box;
+        }
+
+        .mc-num {
+            position: absolute;
+            left: 14px;
+            bottom: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            color: rgba(53, 125, 237, 0.45);
+        }
+    }
+}
+
+@keyframes mcIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: none; }
+}
+
+@media screen and (max-width: 1000px) {
+    .container.portfolio-page .mc-section { margin-left: -50px; margin-right: 0; }
+}
+
+@media screen and (max-width: 700px) {
+    .container.portfolio-page .mc-section {
+        margin: 10px 0 80px 0;
+
+        .mc-grid {
+            grid-template-columns: repeat(2, 1fr);
+            grid-auto-rows: 120px;
+        }
+
+        .mc-tile { grid-column: span 1 !important; }
+        .mc-tile:nth-child(4n+1) { grid-column: span 2 !important; }
+    }
+}

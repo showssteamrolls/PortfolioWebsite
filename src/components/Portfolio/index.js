@@ -3,6 +3,7 @@ import PageLoader from "../PageLoader";
 import "./index.scss";
 import AnimatedLetters from "../AnimatedLetters";
 import portfolioData from "../../data/portfolio.json";
+import MinecraftCollage from "./MinecraftCollage";
 
 const Portfolio = () => {
     const [letterClass, setLetterClass] = useState('text-animate');
@@ -47,6 +48,7 @@ const Portfolio = () => {
                     <AnimatedLetters letterClass = {letterClass} strArray={"Portfolio".split("")} idx={15}/>
                 </h1>
                 <div>{renderPortfolio(portfolioData.portfolio)}</div>
+                <MinecraftCollage />
             </div>
             <PageLoader />
         </>

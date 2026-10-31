@@ -1,0 +1,4 @@
+{
+    "note": "Drop photos in public/minecraft/ and list them here, in order. Each tile takes the next layout slot (big, wide, tall, small...). Slots with no photo yet show a placeholder.",
+    "photos": []
+}
