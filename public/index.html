@@ -24,30 +24,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
     <style>
-/* Site-wide cursor: a soft blue-outlined arrow, and a hand over anything clickable.
-   Plain 1x images everywhere; sharper 2x versions where image-set is supported. */
-:root {
-  --cursor-arrow: url('/cursors/arrow.png') 5 4, auto;
-  --cursor-hand: url('/cursors/hand.png') 12 3, pointer;
-}
-
-@supports (cursor: image-set(url('/cursors/arrow.png') 1x, url('/cursors/arrow@2x.png') 2x) 5 4) {
-  :root {
-    --cursor-arrow: image-set(url('/cursors/arrow.png') 1x, url('/cursors/arrow@2x.png') 2x) 5 4, auto;
-    --cursor-hand: image-set(url('/cursors/hand.png') 1x, url('/cursors/hand@2x.png') 2x) 12 3, pointer;
-  }
-}
-
-@supports (cursor: -webkit-image-set(url('/cursors/arrow.png') 1x, url('/cursors/arrow@2x.png') 2x) 5 4) {
-  :root {
-    --cursor-arrow: -webkit-image-set(url('/cursors/arrow.png') 1x, url('/cursors/arrow@2x.png') 2x) 5 4, auto;
-    --cursor-hand: -webkit-image-set(url('/cursors/hand.png') 1x, url('/cursors/hand@2x.png') 2x) 12 3, pointer;
-  }
-}
-
+/* Site-wide cursor: a blue-outlined arrow, and a hand over anything clickable.
+   Each declaration falls back to the next if the browser can't read it (last valid one wins). */
 html,
 body {
-  cursor: var(--cursor-arrow);
+  cursor: url('/cursors/arrow.png') 5 4, auto;
+  cursor: -webkit-image-set(url('/cursors/arrow.png') 1x, url('/cursors/arrow@2x.png') 2x, url('/cursors/arrow@3x.png') 3x) 5 4, auto;
+  cursor: image-set(url('/cursors/arrow.png') 1x, url('/cursors/arrow@2x.png') 2x, url('/cursors/arrow@3x.png') 3x) 5 4, auto;
 }
 
 a,
@@ -59,9 +42,11 @@ summary,
 label[for],
 input[type='submit'],
 input[type='button'] {
-  cursor: var(--cursor-hand) !important;
+  cursor: url('/cursors/hand.png') 12 3, pointer !important;
+  cursor: -webkit-image-set(url('/cursors/hand.png') 1x, url('/cursors/hand@2x.png') 2x, url('/cursors/hand@3x.png') 3x) 12 3, pointer !important;
+  cursor: image-set(url('/cursors/hand.png') 1x, url('/cursors/hand@2x.png') 2x, url('/cursors/hand@3x.png') 3x) 12 3, pointer !important;
 }
-    </style>
+</style>
     <title>Anthony | Aspiring Data Scientist</title>
     <!-- Vercel Analytics script -->
     <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
