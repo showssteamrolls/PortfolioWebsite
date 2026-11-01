@@ -28,7 +28,7 @@ const MinecraftCollage = () => {
         <section className="mc-section">
             <div className="construction-line" role="img" aria-label="Under construction" />
             <h2 className="mc-title">Minecraft Builds</h2>
-            <p className="mc-sub">Under construction — more builds coming soon.</p>
+            <p className="mc-sub">Work In Progress</p>
             {blocks.map((tiles, bi) => (
                 <div className="mc-grid" key={bi}>
                     {tiles.map(({ n, photo, area }) => (
