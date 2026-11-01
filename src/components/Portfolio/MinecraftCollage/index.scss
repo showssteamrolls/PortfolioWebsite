@@ -1,5 +1,6 @@
 .container.portfolio-page .mc-section {
-    margin: 10px 0 120px 50px;
+    /* starts below the first screen, so it only appears once you scroll */
+    margin: max(80px, calc(100vh - 640px)) 0 120px 50px;
     max-width: 1100px;
 
     .construction-line {
@@ -98,7 +99,7 @@
 
 @media screen and (max-width: 700px) {
     .container.portfolio-page .mc-section {
-        margin: 10px 0 80px 0;
+        margin: max(140px, calc(100vh - 700px)) 0 80px 0;
 
         .mc-grid { aspect-ratio: 3 / 4; }
         .mc-tile .mc-num { font-size: 11px; left: 8px; bottom: 6px; }
