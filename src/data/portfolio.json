@@ -7,7 +7,7 @@
             "url": "https://boston-shawarma-reviews-dashboard.vercel.app/"
         },
         {
-            "cover": "/portfolio/spar-tracker.png",
+            "cover": "/portfolio/spar-io.png",
             "title": "Computer Vision: Boxing Analytics",
             "description": "Python, MediaPipe, OpenCV, Visual Data Processing, Motion Tracking, Real-Time Analytics",
             "url": "https://spartracker.vercel.app/"
