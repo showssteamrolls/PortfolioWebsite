@@ -10,7 +10,7 @@
             "cover": "/portfolio/spar-tracker.png",
             "title": "Computer Vision: Boxing Analytics",
             "description": "Python, MediaPipe, OpenCV, Visual Data Processing, Motion Tracking, Real-Time Analytics",
-            "url": "https://boxing-form-grader.vercel.app/"
+            "url": "https://spartracker.vercel.app/"
         },
         {
             "cover": "/portfolio/equity-portfolio.png",
