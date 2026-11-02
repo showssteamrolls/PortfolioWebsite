@@ -8,7 +8,7 @@
         },
         {
             "cover": "/portfolio/boxing-app-webpage.png",
-            "title": "Live Boxing Form Grader",
+            "title": "Computer Vision: Boxing Analytics",
             "description": "Python, MediaPipe, OpenCV, Visual Data Processing, Motion Tracking, Real-Time Analytics",
             "url": "https://boxing-form-grader.vercel.app/"
         },
